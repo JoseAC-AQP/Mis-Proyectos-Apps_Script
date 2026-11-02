@@ -1,1 +1,546 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metrología e Interpretación de Tolerancias ISO 3D (ISO 286)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        fluent: {
+                            bg: '#f3f3f3',
+                            card: '#ffffff',
+                            border: '#e5e5e5',
+                            hover: '#ebf3fc',
+                            accent: '#0067c0',
+                            accentHover: '#005a9e',
+                            textPrimary: '#1b1b1b',
+                            textSecondary: '#5d5d5d',
+                            hole: '#d946ef',
+                            shaft: '#10b981'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['Consolas', 'JetBrains Mono', 'Courier New', 'monospace'],
+                        sans: ['Segoe UI', 'Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Three.js + OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <!-- Inclusión del CSS Stylesheet -->
+    <?!= include('Style'); ?>
+</head>
+<body class="bg-[#f3f3f3] text-slate-800 font-sans h-full flex flex-col overflow-hidden select-none">
 
+    <!-- Header / Navbar Top (Win11 Light Style) -->
+    <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 px-5 py-2.5 flex items-center justify-between shrink-0 z-10 shadow-sm">
+        <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-sky-50 border border-sky-200 p-2 rounded-xl text-[#0067c0] shadow-sm">
+                    <i data-lucide="box" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base text-slate-900 flex items-center gap-2">
+                        Metrología e Interpretación ISO 3D 
+                        <span class="text-[10px] bg-blue-50 border border-blue-200 text-[#0067c0] px-2 py-0.5 rounded-full font-mono font-semibold">ISO 286-1 / 286-2</span>
+                    </h1>
+                    <p class="text-[11px] text-slate-500">Visor CAD 3D Tridimensional - Diseños Mecánicos y Ajustes</p>
+                </div>
+            </div>
+
+            <!-- Tab Navigation Bar -->
+            <nav class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-medium ml-4">
+                <button id="nav-tab-interpretation" class="tab-btn active px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                    <i data-lucide="layers" class="w-3.5 h-3.5"></i> Interpretación
+                </button>
+                <button id="nav-tab-tables" class="tab-btn px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                    <i data-lucide="table" class="w-3.5 h-3.5"></i> Tablas ISO
+                </button>
+                <button id="nav-tab-eval" class="tab-btn px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                    <i data-lucide="check-square" class="w-3.5 h-3.5"></i> Evaluación
+                </button>
+            </nav>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div class="hidden md:flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-600 font-mono">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Visor 3D: WebGL / Fluent</span>
+            </div>
+            <button id="btn-reset" class="bg-white hover:bg-slate-50 text-slate-700 px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 transition shadow-sm flex items-center gap-1.5">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i> Restablecer
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <div class="flex-1 overflow-hidden relative">
+
+        <!-- PESTAÑA 1: INTERPRETACIÓN -->
+        <main id="tab-content-interpretation" class="w-full h-full grid grid-cols-1 lg:grid-cols-12 overflow-hidden bg-[#f8f9fa] p-3 gap-3">
+
+            <!-- PANEL IZQUIERDO -->
+            <aside class="lg:col-span-3 fluent-card rounded-2xl flex flex-col h-full overflow-hidden shadow-sm">
+                <div class="p-3.5 border-b border-slate-100 bg-white/50">
+                    <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 block">1. Seleccionar Elemento</label>
+                    <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100/80 rounded-xl border border-slate-200">
+                        <button id="btn-type-hole" class="type-btn active flex items-center justify-center gap-2 py-2 px-3 rounded-lg font-semibold text-xs transition bg-white text-purple-700 border border-purple-200 shadow-sm">
+                            <i data-lucide="circle-dot" class="w-4 h-4 text-purple-600"></i> AGUJERO (H)
+                        </button>
+                        <button id="btn-type-shaft" class="type-btn flex items-center justify-center gap-2 py-2 px-3 rounded-lg font-semibold text-xs text-slate-500 hover:text-slate-800 transition border border-transparent">
+                            <i data-lucide="cylinder" class="w-4 h-4 text-emerald-600"></i> EJE (h)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-3.5 border-b border-slate-100 bg-white/30">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                            <i data-lucide="sliders" class="w-3.5 h-3.5 text-[#0067c0]"></i> Medida Nominal (<i>N</i>)
+                        </label>
+                        <span id="nominal-display" class="font-mono text-xs font-bold text-[#0067c0] bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">Ø 50.00 mm</span>
+                    </div>
+                    <input type="range" id="slider-nominal" min="10" max="120" step="1" value="50" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0067c0]">
+                    <div class="flex justify-between text-[10px] text-slate-400 font-mono mt-1.5">
+                        <span>Ø10mm</span>
+                        <span>Ø50mm</span>
+                        <span>Ø80mm</span>
+                        <span>Ø120mm</span>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto p-3 space-y-2" id="plans-catalog-container">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">2. Catálogo ISO (10)</span>
+                        <span class="text-[10px] text-slate-400 font-mono" id="catalog-count-badge">Mostrando 10 Agujeros</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- PANEL CENTRAL: Visor 3D Three.js -->
+            <section class="lg:col-span-6 fluent-card rounded-2xl flex flex-col h-full relative overflow-hidden border border-slate-200 shadow-sm fluent-grid-3d">
+                <div class="p-3 bg-white/90 border-b border-slate-100 flex flex-wrap items-center justify-between z-10 gap-2">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="eye" class="w-4 h-4 text-[#0067c0]"></i>
+                        <span id="canvas-title-plan" class="text-xs font-bold text-slate-800 font-mono">PLANO 3D: COTA ISO Ø50<sup>H7</sup></span>
+                    </div>
+                    
+                    <div class="flex items-center gap-1.5">
+                        <button id="btn-toggle-grid" class="px-2.5 py-1 bg-white hover:bg-slate-50 text-[#0067c0] border border-blue-200 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5 font-mono" title="Mostrar/Ocultar Parrilla">
+                            <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+                            <span id="lbl-grid-toggle">Parrilla: ON</span>
+                        </button>
+                        <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-[11px]">
+                            <button id="cam-iso" class="px-2.5 py-0.5 bg-white text-[#0067c0] font-bold rounded-lg shadow-sm font-mono transition" title="Vista Isométrica">ISO</button>
+                            <button id="cam-front" class="px-2.5 py-0.5 hover:bg-white text-slate-600 rounded-lg font-mono transition" title="Vista Frontal">Frontal</button>
+                            <button id="cam-side" class="px-2.5 py-0.5 hover:bg-white text-slate-600 rounded-lg font-mono transition" title="Vista Lateral">Lateral</button>
+                            <button id="cam-top" class="px-2.5 py-0.5 hover:bg-white text-slate-600 rounded-lg font-mono transition" title="Vista Superior">Superior</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 relative w-full h-full cursor-grab active:cursor-grabbing bg-[#f4f6f9]" id="threejs-container">
+                    <div id="axes-indicator-container" class="absolute bottom-3 left-3 w-20 h-20 bg-white/80 backdrop-blur-md border border-slate-200 rounded-xl shadow-sm pointer-events-none flex items-center justify-center">
+                        <canvas id="axes-canvas" class="w-full h-full"></canvas>
+                    </div>
+
+                    <div id="cota-3d-overlay" class="absolute pointer-events-none bg-white/95 border border-slate-200 rounded-xl px-3.5 py-1.5 shadow-lg backdrop-blur-md transform -translate-x-1/2 -translate-y-1/2 transition-all duration-75">
+                        <div class="flex items-center gap-1.5 font-mono">
+                            <span class="w-2 h-2 rounded-full bg-[#0067c0] animate-ping"></span>
+                            <span id="cota-overlay-text" class="text-base font-extrabold text-slate-900">Ø50<sup class="text-xs text-purple-600 font-bold ml-0.5">H7</sup></span>
+                        </div>
+                        <div id="cota-overlay-sub" class="text-[10px] text-slate-500 font-mono text-center">+0.025 / 0.000 mm</div>
+                    </div>
+
+                    <div class="absolute bottom-3 right-3 bg-white/90 border border-slate-200 rounded-xl p-2 text-[10px] font-mono text-slate-500 pointer-events-none shadow-sm">
+                        <div class="flex items-center gap-1.5 text-slate-600 font-semibold">
+                            <i data-lucide="mouse-pointer-click" class="w-3 h-3 text-[#0067c0]"></i>
+                            <span>Arrastrar: Rotar 3D | Wheel: Zoom</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-2.5 bg-white/90 border-t border-slate-100 text-[11px] text-slate-500 flex flex-wrap justify-between items-center px-4 font-mono z-10">
+                    <div class="flex items-center gap-4">
+                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block"></span> Agujero (Interior)</span>
+                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Eje (Mecanizado)</span>
+                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> Tolerancia Total (<i>T</i>)</span>
+                    </div>
+                    <div class="text-slate-400">Modelo 3D Fluent Studio</div>
+                </div>
+            </section>
+
+            <!-- PANEL DERECHO -->
+            <aside class="lg:col-span-3 fluent-card rounded-2xl flex flex-col h-full overflow-y-auto shadow-sm">
+                <div class="p-3.5 border-b border-slate-100 bg-white/50">
+                    <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Interpretación y Cálculos ISO</div>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <h2 id="right-designation-title" class="text-2xl font-extrabold text-[#0067c0] font-mono tracking-tight">Ø50<sup>H7</sup></h2>
+                        <span id="right-element-badge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">Agujero</span>
+                    </div>
+                    <p id="right-subtitle-desc" class="text-xs text-slate-500 mt-1">Ajuste de precisión normal para guiados y ensamble deslizante.</p>
+                </div>
+
+                <div class="p-3.5 border-b border-slate-100 space-y-2.5">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                        <i data-lucide="calculator" class="w-3.5 h-3.5 text-[#0067c0]"></i>
+                        Desglose Metrológico ISO
+                    </h3>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                        <div class="bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/80">
+                            <span class="text-slate-400 block text-[10px]">MEDIDA NOMINAL (<i>N</i>)</span>
+                            <span id="calc-nominal" class="text-slate-800 font-bold text-xs">50.000 mm</span>
+                        </div>
+                        <div class="bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/80">
+                            <span class="text-slate-400 block text-[10px]">CALIDAD / GRADO IT</span>
+                            <span id="calc-it-grade" class="text-amber-600 font-bold text-xs">IT7 (25 µm)</span>
+                        </div>
+
+                        <div class="bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/80">
+                            <span id="lbl-es" class="text-slate-400 block text-[10px]">DESV. SUPERIOR (ES)</span>
+                            <span id="calc-es" class="text-emerald-600 font-bold text-xs">+0.025 mm</span>
+                            <span id="calc-es-um" class="text-[10px] text-slate-400 block">+25 µm</span>
+                        </div>
+                        <div class="bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/80">
+                            <span id="lbl-ei" class="text-slate-400 block text-[10px]">DESV. INFERIOR (EI)</span>
+                            <span id="calc-ei" class="text-sky-600 font-bold text-xs">0.000 mm</span>
+                            <span id="calc-ei-um" class="text-[10px] text-slate-400 block">0 µm</span>
+                        </div>
+
+                        <div class="bg-blue-50/60 p-2.5 rounded-xl border border-blue-200/80 col-span-2">
+                            <span class="text-blue-500 block text-[10px] font-bold">TOLERANCIA TOTAL (<i>T</i> = ES - EI)</span>
+                            <div class="flex justify-between items-baseline">
+                                <span id="calc-tolerance" class="text-[#0067c0] font-bold text-sm">0.025 mm</span>
+                                <span id="calc-tolerance-um" class="text-xs text-blue-700 font-mono">25 µm</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/80">
+                            <span id="lbl-dmax" class="text-slate-400 block text-[10px]">DIMENSIÓN MÁX. (<i>D</i><sub>máx</sub>)</span>
+                            <span id="calc-dmax" class="text-slate-800 font-bold text-xs">50.025 mm</span>
+                        </div>
+                        <div class="bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/80">
+                            <span id="lbl-dmin" class="text-slate-400 block text-[10px]">DIMENSIÓN MÍN. (<i>D</i><sub>mín</sub>)</span>
+                            <span id="calc-dmin" class="text-slate-800 font-bold text-xs">50.000 mm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3.5 border-b border-slate-100 space-y-2.5">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                        <i data-lucide="book-open" class="w-3.5 h-3.5 text-[#0067c0]"></i>
+                        Análisis de Designación ISO
+                    </h3>
+                    
+                    <div class="space-y-2 text-xs text-slate-700">
+                        <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
+                            <div class="font-bold text-[#0067c0] mb-0.5 flex items-center gap-1">
+                                <span id="explain-letter-tag" class="bg-blue-50 text-[#0067c0] px-1.5 py-0.2 rounded font-mono text-xs border border-blue-100">Letra 'H'</span>
+                                <span>Posición Fundamental</span>
+                            </div>
+                            <p id="explain-letter-text" class="text-slate-600 leading-relaxed text-[11px]">
+                                Letra mayúscula indica un <strong>Agujero</strong>. La posición 'H' significa que la Desviación Inferior EI = 0.
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
+                            <div class="font-bold text-amber-700 mb-0.5 flex items-center gap-1">
+                                <span id="explain-number-tag" class="bg-amber-50 text-amber-700 px-1.5 py-0.2 rounded font-mono text-xs border border-amber-100">Número '7'</span>
+                                <span>Grado de Calidad (IT)</span>
+                            </div>
+                            <p id="explain-number-text" class="text-slate-600 leading-relaxed text-[11px]">
+                                Indica un grado de precisión IT7. Representa la amplitud de la tolerancia dimensional permisible.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3.5 space-y-2.5">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                        <i data-lucide="check-circle" class="w-3.5 h-3.5 text-[#0067c0]"></i>
+                        Criterio de Aceptación y Calibres
+                    </h3>
+
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2.5">
+                        <div class="text-[11px] text-slate-600 leading-relaxed">
+                            Una pieza individual será <strong>conforme y aceptada</strong> en metrología si su dimensión real <i>D</i><sub>real</sub> cumple la condición:
+                        </div>
+
+                        <div class="bg-blue-50/70 p-2 rounded-lg border border-blue-200 font-mono text-xs text-center font-bold text-[#0067c0]" id="condition-limits-display">
+                            50.000 mm ≤ <i>D</i><sub>real</sub> ≤ 50.025 mm
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-100 space-y-2 font-mono text-[11px]">
+                            <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider font-sans">Límites de Inspección (Calibres Límite):</span>
+                            
+                            <div class="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                <span class="text-emerald-700 font-bold flex items-center gap-1 font-sans"><i data-lucide="check" class="w-3.5 h-3.5"></i> Calibre PASA (Go):</span>
+                                <span id="gauge-pass-val" class="font-bold text-slate-800">50.000 mm</span>
+                            </div>
+
+                            <div class="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                <span class="text-rose-600 font-bold flex items-center gap-1 font-sans"><i data-lucide="x-circle" class="w-3.5 h-3.5"></i> Calibre NO PASA (No-Go):</span>
+                                <span id="gauge-nopass-val" class="font-bold text-slate-800">50.025 mm</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-100">
+                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Campo de Aplicación Típico:</span>
+                            <p id="industrial-application-text" class="text-[11px] text-slate-600 italic bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                                Cojinetes de fricción, guías de deslizamiento, pistas de rodamientos de precisión y ejes principales.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- PESTAÑA 2: TABLAS ISO -->
+        <main id="tab-content-tables" class="hidden w-full h-full overflow-y-auto bg-[#f8f9fa] p-4 space-y-4">
+            <div class="fluent-card p-4 rounded-2xl border border-slate-200 flex items-center justify-between">
+                <div>
+                    <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="table" class="w-5 h-5 text-[#0067c0]"></i> Tablas Completas Normativas ISO 286-1 e ISO 286-2
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Matriz oficial de tolerancias ISO: Posiciones fundamentales en las columnas superiores (A a ZC / a a zc) y rangos de dimensión nominal en las filas (hasta 500 mm). Valores en micrómetros (µm).</p>
+                </div>
+            </div>
+
+            <!-- Tabla 1 -->
+            <section class="fluent-card p-4 rounded-2xl border border-slate-200 space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                        Tabla ISO 286-1: Grados de Tolerancia Fundamental Completos (IT1 a IT18) [Valores en µm]
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-[11px] font-mono text-center border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                <th class="p-2 text-left sticky left-0 bg-slate-100 min-w-[130px]">Rango Nominal (mm)</th>
+                                <th class="p-1.5 bg-amber-50/50">IT1</th>
+                                <th class="p-1.5 bg-amber-50/50">IT2</th>
+                                <th class="p-1.5 bg-amber-50/50">IT3</th>
+                                <th class="p-1.5 bg-amber-50/50">IT4</th>
+                                <th class="p-1.5 bg-amber-50/50">IT5</th>
+                                <th class="p-1.5 font-bold text-[#0067c0] bg-blue-50/60">IT6</th>
+                                <th class="p-1.5 font-bold text-[#0067c0] bg-blue-50/60">IT7</th>
+                                <th class="p-1.5 font-bold text-[#0067c0] bg-blue-50/60">IT8</th>
+                                <th class="p-1.5 font-bold text-[#0067c0] bg-blue-50/60">IT9</th>
+                                <th class="p-1.5 font-bold text-[#0067c0] bg-blue-50/60">IT10</th>
+                                <th class="p-1.5 font-bold text-[#0067c0] bg-blue-50/60">IT11</th>
+                                <th class="p-1.5">IT12</th>
+                                <th class="p-1.5">IT13</th>
+                                <th class="p-1.5">IT14</th>
+                                <th class="p-1.5">IT15</th>
+                                <th class="p-1.5">IT16</th>
+                                <th class="p-1.5">IT17</th>
+                                <th class="p-1.5">IT18</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700 whitespace-nowrap">
+                            <tr class="hover:bg-blue-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">Hasta 3 mm</td><td class="p-1.5">0.8</td><td class="p-1.5">1.2</td><td class="p-1.5">2</td><td class="p-1.5">3</td><td class="p-1.5">4</td><td class="p-1.5 font-bold text-[#0067c0]">6</td><td class="p-1.5 font-bold text-[#0067c0]">10</td><td class="p-1.5 font-bold text-[#0067c0]">14</td><td class="p-1.5 font-bold text-[#0067c0]">25</td><td class="p-1.5 font-bold text-[#0067c0]">40</td><td class="p-1.5 font-bold text-[#0067c0]">60</td><td class="p-1.5">100</td><td class="p-1.5">140</td><td class="p-1.5">250</td><td class="p-1.5">400</td><td class="p-1.5">600</td><td class="p-1.5">1000</td><td class="p-1.5">1400</td></tr>
+                            <tr class="hover:bg-blue-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 3 a 6 mm</td><td class="p-1.5">1</td><td class="p-1.5">1.5</td><td class="p-1.5">2.5</td><td class="p-1.5">4</td><td class="p-1.5">5</td><td class="p-1.5 font-bold text-[#0067c0]">8</td><td class="p-1.5 font-bold text-[#0067c0]">12</td><td class="p-1.5 font-bold text-[#0067c0]">18</td><td class="p-1.5 font-bold text-[#0067c0]">30</td><td class="p-1.5 font-bold text-[#0067c0]">48</td><td class="p-1.5 font-bold text-[#0067c0]">75</td><td class="p-1.5">120</td><td class="p-1.5">180</td><td class="p-1.5">300</td><td class="p-1.5">480</td><td class="p-1.5">750</td><td class="p-1.5">1200</td><td class="p-1.5">1800</td></tr>
+                            <tr class="hover:bg-blue-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 6 a 10 mm</td><td class="p-1.5">1</td><td class="p-1.5">1.5</td><td class="p-1.5">2.5</td><td class="p-1.5">4</td><td class="p-1.5">6</td><td class="p-1.5 font-bold text-[#0067c0]">9</td><td class="p-1.5 font-bold text-[#0067c0]">15</td><td class="p-1.5 font-bold text-[#0067c0]">22</td><td class="p-1.5 font-bold text-[#0067c0]">36</td><td class="p-1.5 font-bold text-[#0067c0]">58</td><td class="p-1.5 font-bold text-[#0067c0]">90</td><td class="p-1.5">150</td><td class="p-1.5">220</td><td class="p-1.5">360</td><td class="p-1.5">580</td><td class="p-1.5">900</td><td class="p-1.5">1500</td><td class="p-1.5">2200</td></tr>
+                            <tr class="hover:bg-blue-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 10 a 18 mm</td><td class="p-1.5">1.2</td><td class="p-1.5">2</td><td class="p-1.5">3</td><td class="p-1.5">5</td><td class="p-1.5">8</td><td class="p-1.5 font-bold text-[#0067c0]">11</td><td class="p-1.5 font-bold text-[#0067c0]">18</td><td class="p-1.5 font-bold text-[#0067c0]">27</td><td class="p-1.5 font-bold text-[#0067c0]">43</td><td class="p-1.5 font-bold text-[#0067c0]">70</td><td class="p-1.5 font-bold text-[#0067c0]">110</td><td class="p-1.5">180</td><td class="p-1.5">270</td><td class="p-1.5">430</td><td class="p-1.5">700</td><td class="p-1.5">1100</td><td class="p-1.5">1800</td><td class="p-1.5">2700</td></tr>
+                            <tr class="hover:bg-blue-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 18 a 30 mm</td><td class="p-1.5">1.5</td><td class="p-1.5">2.5</td><td class="p-1.5">4</td><td class="p-1.5">6</td><td class="p-1.5">9</td><td class="p-1.5 font-bold text-[#0067c0]">13</td><td class="p-1.5 font-bold text-[#0067c0]">21</td><td class="p-1.5 font-bold text-[#0067c0]">33</td><td class="p-1.5 font-bold text-[#0067c0]">52</td><td class="p-1.5 font-bold text-[#0067c0]">84</td><td class="p-1.5 font-bold text-[#0067c0]">130</td><td class="p-1.5">210</td><td class="p-1.5">330</td><td class="p-1.5">520</td><td class="p-1.5">840</td><td class="p-1.5">1300</td><td class="p-1.5">2100</td><td class="p-1.5">3300</td></tr>
+                            <tr class="hover:bg-blue-50/40 bg-blue-50/30"><td class="p-2 text-left font-bold text-[#0067c0] sticky left-0 bg-blue-50">> 30 a 50 mm</td><td class="p-1.5">1.5</td><td class="p-1.5">2.5</td><td class="p-1.5">4</td><td class="p-1.5">7</td><td class="p-1.5">11</td><td class="p-1.5 font-bold text-[#0067c0]">16</td><td class="p-1.5 font-bold text-[#0067c0]">25</td><td class="p-1.5 font-bold text-[#0067c0]">39</td><td class="p-1.5 font-bold text-[#0067c0]">62</td><td class="p-1.5 font-bold text-[#0067c0]">100</td><td class="p-1.5 font-bold text-[#0067c0]">160</td><td class="p-1.5">250</td><td class="p-1.5">390</td><td class="p-1.5">620</td><td class="p-1.5">1000</td><td class="p-1.5">1600</td><td class="p-1.5">2500</td><td class="p-1.5">3900</td></tr>
+                            <tr class="hover:bg-blue-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 50 a 80 mm</td><td class="p-1.5">2</td><td class="p-1.5">3</td><td class="p-1.5">5</td><td class="p-1.5">8</td><td class="p-1.5">13</td><td class="p-1.5 font-bold text-[#0067c0]">19</td><td class="p-1.5 font-bold text-[#0067c0]">30</td><td class="p-1.5 font-bold text-[#0067c0]">46</td><td class="p-1.5 font-bold text-[#0067c0]">74</td><td class="p-1.5 font-bold text-[#0067c0]">120</td><td class="p-1.5 font-bold text-[#0067c0]">190</td><td class="p-1.5">300</td><td class="p-1.5">460</td><td class="p-1.5">740</td><td class="p-1.5">1200</td><td class="p-1.5">1900</td><td class="p-1.5">3000</td><td class="p-1.5">4600</td></tr>
+                            <tr class="hover:bg-blue-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 80 a 120 mm</td><td class="p-1.5">2.5</td><td class="p-1.5">4</td><td class="p-1.5">6</td><td class="p-1.5">10</td><td class="p-1.5">15</td><td class="p-1.5 font-bold text-[#0067c0]">22</td><td class="p-1.5 font-bold text-[#0067c0]">35</td><td class="p-1.5 font-bold text-[#0067c0]">54</td><td class="p-1.5 font-bold text-[#0067c0]">87</td><td class="p-1.5 font-bold text-[#0067c0]">140</td><td class="p-1.5 font-bold text-[#0067c0]">220</td><td class="p-1.5">350</td><td class="p-1.5">540</td><td class="p-1.5">870</td><td class="p-1.5">1400</td><td class="p-1.5">2200</td><td class="p-1.5">3500</td><td class="p-1.5">5400</td></tr>
+                            <tr class="hover:bg-blue-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 120 a 180 mm</td><td class="p-1.5">3.5</td><td class="p-1.5">4.5</td><td class="p-1.5">8</td><td class="p-1.5">12</td><td class="p-1.5">18</td><td class="p-1.5 font-bold text-[#0067c0]">25</td><td class="p-1.5 font-bold text-[#0067c0]">40</td><td class="p-1.5 font-bold text-[#0067c0]">63</td><td class="p-1.5 font-bold text-[#0067c0]">100</td><td class="p-1.5 font-bold text-[#0067c0]">160</td><td class="p-1.5 font-bold text-[#0067c0]">250</td><td class="p-1.5">400</td><td class="p-1.5">630</td><td class="p-1.5">1000</td><td class="p-1.5">1600</td><td class="p-1.5">2500</td><td class="p-1.5">4000</td><td class="p-1.5">6300</td></tr>
+                            <tr class="hover:bg-blue-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 180 a 250 mm</td><td class="p-1.5">4.5</td><td class="p-1.5">6</td><td class="p-1.5">10</td><td class="p-1.5">14</td><td class="p-1.5">20</td><td class="p-1.5 font-bold text-[#0067c0]">29</td><td class="p-1.5 font-bold text-[#0067c0]">46</td><td class="p-1.5 font-bold text-[#0067c0]">72</td><td class="p-1.5 font-bold text-[#0067c0]">115</td><td class="p-1.5 font-bold text-[#0067c0]">185</td><td class="p-1.5 font-bold text-[#0067c0]">290</td><td class="p-1.5">460</td><td class="p-1.5">720</td><td class="p-1.5">1150</td><td class="p-1.5">1850</td><td class="p-1.5">2900</td><td class="p-1.5">4600</td><td class="p-1.5">7200</td></tr>
+                            <tr class="hover:bg-blue-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 250 a 315 mm</td><td class="p-1.5">6</td><td class="p-1.5">8</td><td class="p-1.5">12</td><td class="p-1.5">16</td><td class="p-1.5">23</td><td class="p-1.5 font-bold text-[#0067c0]">32</td><td class="p-1.5 font-bold text-[#0067c0]">52</td><td class="p-1.5 font-bold text-[#0067c0]">81</td><td class="p-1.5 font-bold text-[#0067c0]">130</td><td class="p-1.5 font-bold text-[#0067c0]">210</td><td class="p-1.5 font-bold text-[#0067c0]">320</td><td class="p-1.5">520</td><td class="p-1.5">810</td><td class="p-1.5">1300</td><td class="p-1.5">2100</td><td class="p-1.5">3200</td><td class="p-1.5">5200</td><td class="p-1.5">8100</td></tr>
+                            <tr class="hover:bg-blue-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 315 a 400 mm</td><td class="p-1.5">7</td><td class="p-1.5">9</td><td class="p-1.5">13</td><td class="p-1.5">18</td><td class="p-1.5">25</td><td class="p-1.5 font-bold text-[#0067c0]">36</td><td class="p-1.5 font-bold text-[#0067c0]">57</td><td class="p-1.5 font-bold text-[#0067c0]">89</td><td class="p-1.5 font-bold text-[#0067c0]">140</td><td class="p-1.5 font-bold text-[#0067c0]">230</td><td class="p-1.5 font-bold text-[#0067c0]">360</td><td class="p-1.5">570</td><td class="p-1.5">890</td><td class="p-1.5">1400</td><td class="p-1.5">2300</td><td class="p-1.5">3600</td><td class="p-1.5">5700</td><td class="p-1.5">8900</td></tr>
+                            <tr class="hover:bg-blue-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 400 a 500 mm</td><td class="p-1.5">8</td><td class="p-1.5">10</td><td class="p-1.5">15</td><td class="p-1.5">20</td><td class="p-1.5">27</td><td class="p-1.5 font-bold text-[#0067c0]">40</td><td class="p-1.5 font-bold text-[#0067c0]">63</td><td class="p-1.5 font-bold text-[#0067c0]">97</td><td class="p-1.5 font-bold text-[#0067c0]">155</td><td class="p-1.5 font-bold text-[#0067c0]">250</td><td class="p-1.5 font-bold text-[#0067c0]">400</td><td class="p-1.5">630</td><td class="p-1.5">970</td><td class="p-1.5">1550</td><td class="p-1.5">2500</td><td class="p-1.5">4000</td><td class="p-1.5">6300</td><td class="p-1.5">9700</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Tabla 2 -->
+            <section class="fluent-card p-4 rounded-2xl border border-slate-200 space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-purple-700 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+                        Tabla ISO 286-2: Desviaciones Fundamentales para Agujeros (A a ZC) [Valores en µm]
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-[11px] font-mono text-center border-collapse">
+                        <thead>
+                            <tr class="bg-purple-100/80 text-purple-900 border-b border-purple-200 font-bold">
+                                <th class="p-2 text-left sticky left-0 bg-purple-100 min-w-[130px]" rowspan="2">Rango Nominal (mm)</th>
+                                <th class="p-1.5 bg-blue-100/80 text-blue-900 border-b border-blue-200 border-r border-purple-200" colspan="11">Desviación Inferior (EI) — Grupo A a H</th>
+                                <th class="p-1.5 bg-rose-100/80 text-rose-900 border-b border-rose-200" colspan="17">Desviación Superior (ES) — Grupo JS a ZC</th>
+                            </tr>
+                            <tr class="bg-purple-100/60 text-purple-900 border-b border-purple-200 font-bold text-[10px]">
+                                <th class="p-1.5 bg-blue-50 text-blue-800">A</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">B</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">C</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">CD</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">D</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">E</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">EF</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">F</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">FG</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">G</th>
+                                <th class="p-1.5 bg-purple-200 text-purple-950 font-extrabold border-r border-purple-200">H</th>
+                                <th class="p-1.5 bg-amber-100 text-amber-900 font-bold">JS</th>
+                                <th class="p-1.5 bg-amber-50 text-amber-800">J</th>
+                                <th class="p-1.5 bg-amber-50 text-amber-800">K</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">M</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">N</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">P</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">R</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">S</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">T</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">U</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">V</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">X</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">Y</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">Z</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">ZA</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">ZB</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">ZC</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700 whitespace-nowrap">
+                            <tr class="hover:bg-purple-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">Hasta 3 mm</td><td>+270</td><td>+140</td><td>+60</td><td>+34</td><td>+20</td><td>+14</td><td>+10</td><td>+6</td><td>+4</td><td>+2</td><td class="font-extrabold text-purple-900 bg-purple-50">0</td><td>±IT/2</td><td>-2</td><td>-4</td><td>-6</td><td>-10</td><td>-18</td><td>-26</td><td>-32</td><td>-40</td><td>-60</td><td>-80</td><td>-106</td><td>-132</td><td>-160</td><td>-190</td><td>-220</td><td>-260</td></tr>
+                            <tr class="hover:bg-purple-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 3 a 6 mm</td><td>+270</td><td>+140</td><td>+70</td><td>+46</td><td>+30</td><td>+20</td><td>+14</td><td>+10</td><td>+6</td><td>+4</td><td class="font-extrabold text-purple-900 bg-purple-50">0</td><td>±IT/2</td><td>-3</td><td>-6</td><td>-9</td><td>-12</td><td>-20</td><td>-28</td><td>-35</td><td>-45</td><td>-70</td><td>-95</td><td>-120</td><td>-150</td><td>-185</td><td>-220</td><td>-260</td><td>-300</td></tr>
+                            <tr class="hover:bg-purple-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 6 a 10 mm</td><td>+280</td><td>+150</td><td>+80</td><td>+56</td><td>+40</td><td>+25</td><td>+18</td><td>+13</td><td>+8</td><td>+5</td><td class="font-extrabold text-purple-900 bg-purple-50">0</td><td>±IT/2</td><td>-4</td><td>-8</td><td>-12</td><td>-15</td><td>-24</td><td>-34</td><td>-42</td><td>-52</td><td>-80</td><td>-110</td><td>-140</td><td>-175</td><td>-215</td><td>-255</td><td>-300</td><td>-350</td></tr>
+                            <tr class="hover:bg-purple-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 10 a 18 mm</td><td>+290</td><td>+150</td><td>+95</td><td>+64</td><td>+50</td><td>+32</td><td>+22</td><td>+16</td><td>+10</td><td>+6</td><td class="font-extrabold text-purple-900 bg-purple-50">0</td><td>±IT/2</td><td>-5</td><td>-10</td><td>-15</td><td>-18</td><td>-29</td><td>-40</td><td>-50</td><td>-64</td><td>-95</td><td>-130</td><td>-165</td><td>-205</td><td>-255</td><td>-305</td><td>-360</td><td>-420</td></tr>
+                            <tr class="hover:bg-purple-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 18 a 30 mm</td><td>+300</td><td>+160</td><td>+110</td><td>+76</td><td>+65</td><td>+40</td><td>+28</td><td>+20</td><td>+12</td><td>+7</td><td class="font-extrabold text-purple-900 bg-purple-50">0</td><td>±IT/2</td><td>-6</td><td>-12</td><td>-18</td><td>-22</td><td>-35</td><td>-48</td><td>-60</td><td>-78</td><td>-110</td><td>-150</td><td>-195</td><td>-245</td><td>-305</td><td>-365</td><td>-430</td><td>-500</td></tr>
+                            <tr class="hover:bg-purple-50/40 bg-purple-50/30"><td class="p-2 text-left font-bold text-[#0067c0] sticky left-0 bg-purple-50">> 30 a 50 mm</td><td>+320</td><td>+170</td><td>+130</td><td>+90</td><td>+80</td><td>+50</td><td>+35</td><td>+25</td><td>+15</td><td>+9</td><td class="font-extrabold text-purple-900 bg-purple-100">0</td><td>±IT/2</td><td>-8</td><td>-15</td><td>-21</td><td>-26</td><td>-42</td><td>-58</td><td>-74</td><td>-98</td><td>-135</td><td>-180</td><td>-235</td><td>-295</td><td>-370</td><td>-445</td><td>-525</td><td>-610</td></tr>
+                            <tr class="hover:bg-purple-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 50 a 80 mm</td><td>+340</td><td>+180</td><td>+140</td><td>+106</td><td>+100</td><td>+60</td><td>+42</td><td>+30</td><td>+18</td><td>+10</td><td class="font-extrabold text-purple-900 bg-purple-50">0</td><td>±IT/2</td><td>-9</td><td>-19</td><td>-26</td><td>-32</td><td>-51</td><td>-71</td><td>-91</td><td>-120</td><td>-165</td><td>-220</td><td>-285</td><td>-360</td><td>-450</td><td>-545</td><td>-645</td><td>-750</td></tr>
+                            <tr class="hover:bg-purple-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 80 a 120 mm</td><td>+360</td><td>+190</td><td>+155</td><td>+122</td><td>+120</td><td>+72</td><td>+50</td><td>+36</td><td>+22</td><td>+12</td><td class="font-extrabold text-purple-900 bg-purple-50">0</td><td>±IT/2</td><td>-10</td><td>-22</td><td>-30</td><td>-38</td><td>-59</td><td>-85</td><td>-111</td><td>-148</td><td>-200</td><td>-270</td><td>-350</td><td>-440</td><td>-550</td><td>-670</td><td>-795</td><td>-925</td></tr>
+                            <tr class="hover:bg-purple-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 120 a 180 mm</td><td>+380</td><td>+210</td><td>+175</td><td>+145</td><td>+145</td><td>+85</td><td>+60</td><td>+43</td><td>+26</td><td>+14</td><td class="font-extrabold text-purple-900 bg-purple-50">0</td><td>±IT/2</td><td>-12</td><td>-25</td><td>-35</td><td>-44</td><td>-68</td><td>-100</td><td>-132</td><td>-178</td><td>-240</td><td>-325</td><td>-425</td><td>-535</td><td>-670</td><td>-815</td><td>-970</td><td>-1130</td></tr>
+                            <tr class="hover:bg-purple-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 180 a 250 mm</td><td>+410</td><td>+230</td><td>+200</td><td>+170</td><td>+170</td><td>+100</td><td>+70</td><td>+50</td><td>+30</td><td>+15</td><td class="font-extrabold text-purple-900 bg-purple-50">0</td><td>±IT/2</td><td>-14</td><td>-29</td><td>-40</td><td>-50</td><td>-79</td><td>-118</td><td>-158</td><td>-212</td><td>-285</td><td>-390</td><td>-510</td><td>-645</td><td>-810</td><td>-985</td><td>-1175</td><td>-1370</td></tr>
+                            <tr class="hover:bg-purple-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 250 a 315 mm</td><td>+460</td><td>+260</td><td>+230</td><td>+195</td><td>+190</td><td>+110</td><td>+78</td><td>+56</td><td>+34</td><td>+17</td><td class="font-extrabold text-purple-900 bg-purple-50">0</td><td>±IT/2</td><td>-16</td><td>-32</td><td>-44</td><td>-56</td><td>-88</td><td>-136</td><td>-182</td><td>-245</td><td>-330</td><td>-450</td><td>-590</td><td>-750</td><td>-940</td><td>-1150</td><td>-1370</td><td>-1600</td></tr>
+                            <tr class="hover:bg-purple-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 315 a 400 mm</td><td>+520</td><td>+290</td><td>+260</td><td>+220</td><td>+210</td><td>+125</td><td>+88</td><td>+62</td><td>+38</td><td>+18</td><td class="font-extrabold text-purple-900 bg-purple-50">0</td><td>±IT/2</td><td>-18</td><td>-36</td><td>-50</td><td>-62</td><td>-98</td><td>-155</td><td>-210</td><td>-282</td><td>-380</td><td>-520</td><td>-680</td><td>-865</td><td>-1080</td><td>-1320</td><td>-1570</td><td>-1840</td></tr>
+                            <tr class="hover:bg-purple-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 400 a 500 mm</td><td class="p-1.5">+580</td><td>+320</td><td>+290</td><td>+250</td><td>+230</td><td>+135</td><td>+96</td><td>+68</td><td>+40</td><td>+20</td><td class="font-extrabold text-purple-900 bg-purple-50">0</td><td>±IT/2</td><td>-20</td><td>-40</td><td>-56</td><td>-68</td><td>-108</td><td>-172</td><td>-235</td><td>-318</td><td>-430</td><td>-590</td><td>-770</td><td>-980</td><td>-1230</td><td>-1500</td><td class="p-1.5">-1780</td><td>-2080</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Tabla 3 -->
+            <section class="fluent-card p-4 rounded-2xl border border-slate-200 space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                        Tabla ISO 286-2: Desviaciones Fundamentales para Ejes (a a zc) [Valores en µm]
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-[11px] font-mono text-center border-collapse">
+                        <thead>
+                            <tr class="bg-emerald-100/80 text-emerald-900 border-b border-emerald-200 font-bold">
+                                <th class="p-2 text-left sticky left-0 bg-emerald-100 min-w-[130px]" rowspan="2">Rango Nominal (mm)</th>
+                                <th class="p-1.5 bg-blue-100/80 text-blue-900 border-b border-blue-200 border-r border-emerald-200" colspan="11">Desviación Superior (es) — Grupo a a h</th>
+                                <th class="p-1.5 bg-rose-100/80 text-rose-900 border-b border-rose-200" colspan="17">Desviación Inferior (ei) — Grupo js a zc</th>
+                            </tr>
+                            <tr class="bg-emerald-100/60 text-emerald-900 border-b border-emerald-200 font-bold text-[10px]">
+                                <th class="p-1.5 bg-blue-50 text-blue-800">a</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">b</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">c</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">cd</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">d</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">e</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">ef</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">f</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">fg</th>
+                                <th class="p-1.5 bg-blue-50 text-blue-800">g</th>
+                                <th class="p-1.5 bg-emerald-200 text-emerald-950 font-extrabold border-r border-emerald-200">h</th>
+                                <th class="p-1.5 bg-amber-100 text-amber-900 font-bold">js</th>
+                                <th class="p-1.5 bg-amber-50 text-amber-800">j</th>
+                                <th class="p-1.5 bg-amber-50 text-amber-800">k</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">m</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">n</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">p</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">r</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">s</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">t</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">u</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">v</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">x</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">y</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">z</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">za</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">zb</th>
+                                <th class="p-1.5 bg-rose-50 text-rose-800">zc</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700 whitespace-nowrap">
+                            <tr class="hover:bg-emerald-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">Hasta 3 mm</td><td>-270</td><td>-140</td><td>-60</td><td>-34</td><td>-20</td><td>-14</td><td>-10</td><td>-6</td><td>-4</td><td>-2</td><td class="font-extrabold text-emerald-900 bg-emerald-50">0</td><td>±IT/2</td><td>+2</td><td>+4</td><td>+6</td><td>+10</td><td>+18</td><td>+26</td><td>+32</td><td>+40</td><td>+60</td><td>+80</td><td>+106</td><td>+132</td><td>+160</td><td>+190</td><td>+220</td><td>+260</td></tr>
+                            <tr class="hover:bg-emerald-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 3 a 6 mm</td><td>-270</td><td>-140</td><td>-70</td><td>-46</td><td>-30</td><td>-20</td><td>-14</td><td>-10</td><td>-6</td><td>-4</td><td class="font-extrabold text-emerald-900 bg-emerald-50">0</td><td>±IT/2</td><td>+3</td><td>+6</td><td>+9</td><td>+12</td><td>+20</td><td>+28</td><td>+35</td><td>+45</td><td>+70</td><td>+95</td><td>+120</td><td>+150</td><td>+185</td><td>+220</td><td>+260</td><td>+300</td></tr>
+                            <tr class="hover:bg-emerald-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 6 a 10 mm</td><td>-280</td><td>-150</td><td>-80</td><td>-56</td><td>-40</td><td>-25</td><td>-18</td><td>-13</td><td>-8</td><td>-5</td><td class="font-extrabold text-emerald-900 bg-emerald-50">0</td><td>±IT/2</td><td>+4</td><td>+8</td><td>+12</td><td>+15</td><td>+24</td><td>+34</td><td>+42</td><td>+52</td><td>+80</td><td>+110</td><td>+140</td><td>+175</td><td>+215</td><td>+255</td><td>+300</td><td>+350</td></tr>
+                            <tr class="hover:bg-emerald-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 10 a 18 mm</td><td>-290</td><td>-150</td><td>-95</td><td>-64</td><td>-50</td><td>-32</td><td>-22</td><td>-16</td><td>-10</td><td>-6</td><td class="font-extrabold text-emerald-900 bg-emerald-50">0</td><td>±IT/2</td><td>+5</td><td>+10</td><td>+15</td><td>+18</td><td>+29</td><td>+40</td><td>+50</td><td>+64</td><td>+95</td><td>+130</td><td>+165</td><td>+205</td><td>+255</td><td>+305</td><td>+360</td><td>+420</td></tr>
+                            <tr class="hover:bg-emerald-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 18 a 30 mm</td><td>-300</td><td>-160</td><td>-110</td><td>-76</td><td>-65</td><td>-40</td><td>-28</td><td>-20</td><td>-12</td><td>-7</td><td class="font-extrabold text-emerald-900 bg-emerald-50">0</td><td>±IT/2</td><td>+6</td><td>+12</td><td>+18</td><td>+22</td><td>+35</td><td>+48</td><td>+60</td><td>+78</td><td>+110</td><td>+150</td><td>+195</td><td>+245</td><td>+305</td><td>+365</td><td>+430</td><td>+500</td></tr>
+                            <tr class="hover:bg-emerald-50/40 bg-emerald-50/30"><td class="p-2 text-left font-bold text-[#0067c0] sticky left-0 bg-emerald-50">> 30 a 50 mm</td><td>-320</td><td>-170</td><td>-130</td><td>-90</td><td>-80</td><td>-50</td><td>-35</td><td>-25</td><td>-15</td><td>-9</td><td class="font-extrabold text-emerald-900 bg-emerald-100">0</td><td>±IT/2</td><td>+8</td><td>+15</td><td>+21</td><td>+26</td><td>+42</td><td>+58</td><td>+74</td><td>+98</td><td>+135</td><td>+180</td><td>+235</td><td>+295</td><td>+370</td><td>+445</td><td>+525</td><td>+610</td></tr>
+                            <tr class="hover:bg-emerald-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 50 a 80 mm</td><td>-340</td><td>-180</td><td>-140</td><td>-106</td><td>-100</td><td>-60</td><td>-42</td><td>-30</td><td>-18</td><td>-10</td><td class="font-extrabold text-emerald-900 bg-emerald-50">0</td><td>±IT/2</td><td>+9</td><td>+19</td><td>+26</td><td>+32</td><td>+51</td><td>+71</td><td>+91</td><td>+120</td><td>+165</td><td>+220</td><td>+285</td><td>+360</td><td>+450</td><td>+545</td><td>+645</td><td>+750</td></tr>
+                            <tr class="hover:bg-emerald-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 80 a 120 mm</td><td>-360</td><td>-190</td><td>-155</td><td>-122</td><td>-120</td><td>-72</td><td>-50</td><td>-36</td><td>-22</td><td>-12</td><td class="font-extrabold text-emerald-900 bg-emerald-50">0</td><td>±IT/2</td><td>+10</td><td>+22</td><td>+30</td><td>+38</td><td>+59</td><td>+85</td><td>+111</td><td>+148</td><td>+200</td><td>+270</td><td>+350</td><td>+440</td><td>+550</td><td>+670</td><td>+795</td><td>+925</td></tr>
+                            <tr class="hover:bg-emerald-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 120 a 180 mm</td><td>-380</td><td>-210</td><td>-175</td><td>-145</td><td>-145</td><td>-85</td><td>-60</td><td>-43</td><td>-26</td><td>-14</td><td class="font-extrabold text-emerald-900 bg-emerald-50">0</td><td>±IT/2</td><td>+12</td><td>+25</td><td>+35</td><td>+44</td><td>+68</td><td>+100</td><td>+132</td><td>+178</td><td>+240</td><td>+325</td><td>+425</td><td>+535</td><td>+670</td><td>+815</td><td>+970</td><td>+1130</td></tr>
+                            <tr class="hover:bg-emerald-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 180 a 250 mm</td><td>-410</td><td>-230</td><td>-200</td><td>-170</td><td>-170</td><td>-100</td><td>-70</td><td>-50</td><td>-30</td><td>-15</td><td class="font-extrabold text-emerald-900 bg-emerald-50">0</td><td>±IT/2</td><td>-14</td><td>-29</td><td>-40</td><td>-50</td><td>-79</td><td>-118</td><td>-158</td><td>-212</td><td>-285</td><td>-390</td><td>-510</td><td>-645</td><td>-810</td><td>-985</td><td>-1175</td><td>-1370</td></tr>
+                            <tr class="hover:bg-emerald-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 250 a 315 mm</td><td>-460</td><td>-260</td><td>-230</td><td>-195</td><td>-190</td><td>-110</td><td>-78</td><td>-56</td><td>-34</td><td>-17</td><td class="font-extrabold text-emerald-900 bg-emerald-50">0</td><td>±IT/2</td><td>-16</td><td>-32</td><td>-44</td><td>-56</td><td>-88</td><td>-136</td><td>-182</td><td>-245</td><td>-330</td><td>-450</td><td>-590</td><td>-750</td><td>-940</td><td>-1150</td><td>-1370</td><td>-1600</td></tr>
+                            <tr class="hover:bg-emerald-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 315 a 400 mm</td><td>-520</td><td>-290</td><td>-260</td><td>-220</td><td>-210</td><td>-125</td><td>-88</td><td>-62</td><td>-38</td><td>-18</td><td class="font-extrabold text-emerald-900 bg-emerald-50">0</td><td>±IT/2</td><td>-18</td><td>-36</td><td>-50</td><td>-62</td><td>-98</td><td>-155</td><td>-210</td><td>-282</td><td>-380</td><td>-520</td><td>-680</td><td>-865</td><td>-1080</td><td>-1320</td><td>-1570</td><td>-1840</td></tr>
+                            <tr class="hover:bg-emerald-50/40"><td class="p-2 text-left font-bold text-slate-800 sticky left-0 bg-white">> 400 a 500 mm</td><td class="p-1.5">-580</td><td>-320</td><td>-290</td><td>-250</td><td>-230</td><td>-135</td><td>-96</td><td>-68</td><td>-40</td><td>-20</td><td class="font-extrabold text-emerald-900 bg-emerald-50">0</td><td>±IT/2</td><td>+20</td><td>+40</td><td>+56</td><td>+68</td><td>+108</td><td>+172</td><td>+235</td><td>+318</td><td>+430</td><td>+590</td><td>+770</td><td>+980</td><td>+1230</td><td>+1500</td><td class="p-1.5">+1780</td><td>+2080</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- PESTAÑA 3: EVALUACIÓN -->
+        <main id="tab-content-eval" class="hidden w-full h-full overflow-y-auto bg-[#f8f9fa] p-4 space-y-4">
+            <div class="fluent-card p-4 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="check-square" class="w-5 h-5 text-[#0067c0]"></i> Cuestionario Metrológico Autocalificable (ISO 286)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Evaluación técnica interactiva de 10 preguntas: 5 de Agujeros (1-3 con cota, 7-8 con límites) y 5 de Ejes (4-6 con cota, 9-10 con límites).</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="btn-submit-eval" class="bg-[#0067c0] hover:bg-[#005a9e] text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-2">
+                        <i data-lucide="award" class="w-4 h-4"></i> Calificar Evaluación
+                    </button>
+                    <button id="btn-restart-eval" class="bg-white hover:bg-slate-50 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-semibold border border-slate-300 transition shadow-sm flex items-center gap-1.5">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i> Reiniciar
+                    </button>
+                </div>
+            </div>
+
+            <div id="eval-results-banner" class="hidden p-4 rounded-2xl border bg-white shadow-sm flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div id="eval-score-badge" class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center justify-center font-mono font-bold text-lg">
+                        10/10
+                    </div>
+                    <div>
+                        <h3 id="eval-result-title" class="font-bold text-sm text-slate-900">¡Excelente Desempeño!</h3>
+                        <p id="eval-result-sub" class="text-xs text-slate-500">Has demostrado un dominio completo de las tolerancias ISO 286 para agujeros y ejes.</p>
+                    </div>
+                </div>
+                <span id="eval-percentage" class="text-2xl font-extrabold font-mono text-[#0067c0]">100%</span>
+            </div>
+
+            <div id="quiz-questions-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </main>
+
+    </div>
+
+    <!-- Inclusión del Script JS de la aplicación -->
+    <?!= include('Javascript'); ?>
+</body>
+</html>
