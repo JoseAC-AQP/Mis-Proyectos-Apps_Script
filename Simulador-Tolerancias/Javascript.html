@@ -1,1 +1,1021 @@
+<script>
+    // Catalog ISO 286 Tables & Metadata
+    const ISO_DATA = {
+        HOLES: [
+            { symbol: 'H7', name: 'Agujero H7 (Sistema Agujero Único)', type: 'HOLE', pos: 'H', it: 7, desc: 'Base estándar del sistema de agujero único. Desviación inferior cero (EI=0).', fit: 'Juego / Movil', fitColor: 'emerald', app: 'Alojamiento estándar para rodamientos, casquillos de bronce, guías hidrodinámicas y bujes.' },
+            { symbol: 'H8', name: 'Agujero H8 (Tolerancia Media)', type: 'HOLE', pos: 'H', it: 8, desc: 'Tolerancia más holgada. Mecanizado estándar por escariado rápido o torneado de precisión.', fit: 'Juego', fitColor: 'emerald', app: 'Elementos de transmisión general, poleas de correas, acoplamientos sencillos.' },
+            { symbol: 'JS7', name: 'Agujero JS7 (Simétrico)', type: 'HOLE', pos: 'JS', it: 7, desc: 'Desviaciones simétricas respecto a la línea cero. (ES = +IT/2, EI = -IT/2).', fit: 'Transición', fitColor: 'amber', app: 'Centrados de precisión donde no se requiere preferencia de posición superior o inferior.' },
+            { symbol: 'K7', name: 'Agujero K7 (Transición Fina)', type: 'HOLE', pos: 'K', it: 7, desc: 'Ajuste de precisión con leve interferencia o juego mínimo.', fit: 'Transición', fitColor: 'amber', app: 'Engranajes sobre ejes que requieren posicionamiento preciso con chavetas.' },
+            { symbol: 'N7', name: 'Agujero N7 (Transición Fuerte)', type: 'HOLE', pos: 'N', it: 7, desc: 'Generalmente produce ligera interferencia. Ensamble requiere maza o prensa leve.', fit: 'Transición / Prensa', fitColor: 'amber', app: 'Coronas de engranajes sobre núcleos, casquillos fijos pero desmontables.' },
+            { symbol: 'P7', name: 'Agujero P7 (Interferencia / Apremio)', type: 'HOLE', pos: 'P', it: 7, desc: 'Ajuste prensado (interferencia garantizada). Zona de tolerancia bajo la línea cero.', fit: 'Interferencia', fitColor: 'rose', app: 'Casquillos ajustados a presión fija, asientos indeformables que no se desmontarán.' },
+            { symbol: 'F8', name: 'Agujero F8 (Juego Holgado)', type: 'HOLE', pos: 'F', it: 8, desc: 'Posición F elevada sobre la línea cero. Garantiza un juego libre holgado.', fit: 'Juego Holgado', fitColor: 'emerald', app: 'Cojinetes con dilatación térmica, ejes de bombas de alta temperatura.' },
+            { symbol: 'G7', name: 'Agujero G7 (Juego Fino)', type: 'HOLE', pos: 'G', it: 7, desc: 'Pequeño juego garantizado positivo incluso en las dimensiones límite.', fit: 'Juego Fino', fitColor: 'emerald', app: 'Válvulas correderas, pistones hidráulicos de precisión, guiados de alta fidelidad.' },
+            { symbol: 'E9', name: 'Agujero E9 (Grande Holgura)', type: 'HOLE', pos: 'E', it: 9, desc: 'Amplia zona de tolerancia elevada. Fácil ensamble manual.', fit: 'Juego Grande', fitColor: 'emerald', app: 'Maquinaria agrícola, soportes articulados, mecanismos expuestos al polvo.' },
+            { symbol: 'D10', name: 'Agujero D10 (Muy Holgado)', type: 'HOLE', pos: 'D', it: 10, desc: 'Calidad basta con gran diferencia positiva.', fit: 'Juego Muy Grande', fitColor: 'emerald', app: 'Ejes largos con flexión, mecanismos de construcción, bisagras pesadas.' }
+        ],
+        SHAFTS: [
+            { symbol: 'h6', name: 'Eje h6 (Sistema Eje Único)', type: 'SHAFT', pos: 'h', it: 6, desc: 'Base estándar del sistema de eje único. Desviación superior cero (es=0).', fit: 'Juego / Guiado', fitColor: 'emerald', app: 'Ejes calibrados rectificados comerciales, rodamientos, poleas de precisión.' },
+            { symbol: 'h7', name: 'Eje h7 (Tolerancia Media)', type: 'SHAFT', pos: 'h', it: 7, desc: 'Calidad estándar torneada fina o rectificada.', fit: 'Juego', fitColor: 'emerald', app: 'Ejes de transmisión general, chaveteros, anillos de retención.' },
+            { symbol: 'f7', name: 'Eje f7 (Juego Deslizante)', type: 'SHAFT', pos: 'f', it: 7, desc: 'Desviación superior negativa. Garantiza siempre juego lubricado.', fit: 'Juego Deslizante', fitColor: 'emerald', app: 'Ejes principales de cajas de cambio, cojinetes de turbinas y motores.' },
+            { symbol: 'g6', name: 'Eje g6 (Juego Fino de Guiado)', type: 'SHAFT', pos: 'g', it: 6, desc: 'Muy poco juego pero sin agarrotamiento. Mover manual preciso.', fit: 'Juego Muy Fino', fitColor: 'emerald', app: 'Husillos de máquinas herramientas, herramientas de corte intercambiables.' },
+            { symbol: 'js6', name: 'Eje js6 (Simétrico)', type: 'SHAFT', pos: 'js', it: 6, desc: 'Zona de tolerancia centrada en la línea cero (es = +IT/2, ei = -IT/2).', fit: 'Transición', fitColor: 'amber', app: 'Ajuste de centrado exacto para volantes de inercia y acoplamientos.' },
+            { symbol: 'k6', name: 'Eje k6 (Transición Sin Juego)', type: 'SHAFT', pos: 'k', it: 6, desc: 'Desviación inferior ei ligeramente positiva o cero. Montaje manual suave o maza.', fit: 'Transición', fitColor: 'amber', app: 'Poleas fijas con chaveta, poleas dentadas de distribución.' },
+            { symbol: 'm6', name: 'Eje m6 (Transición / Apremio Leve)', type: 'SHAFT', pos: 'm', it: 6, desc: 'Predomina la interferencia. Requiere martillo de maza o prensa ligera.', fit: 'Transición Fuerte', fitColor: 'amber', app: 'Pasadores de posicionamiento de alta precisión, acoplamientos rígidos.' },
+            { symbol: 'p6', name: 'Eje p6 (Interferencia / Apremio)', type: 'SHAFT', pos: 'p', it: 6, desc: 'Interferencia garantizada en todo el rango dimensional.', fit: 'Interferencia', fitColor: 'rose', app: 'Unión permanente de engranajes sobre ejes sin chaveta, casquillos de fricción.' },
+            { symbol: 'r6', name: 'Eje r6 (Prensa Fuerte)', type: 'SHAFT', pos: 'r', it: 6, desc: 'Fuerte apremio. Ensamble por dilatación térmica o prensa hidráulica.', fit: 'Interferencia Fuerte', fitColor: 'rose', app: 'Anillos interiores de rodamientos pesados en ferrocarriles, cubos de gran carga.' },
+            { symbol: 's6', name: 'Eje s6 (Prensa Muy Fuerte)', type: 'SHAFT', pos: 's', it: 6, desc: 'Apremio máximo. Requiere cálculo de esfuerzos de deformación estructural.', fit: 'Interferencia Máxima', fitColor: 'rose', app: 'Llantas de ruedas de trenes, acoplamientos permanentes de alta potencia.' }
+        ]
+    };
 
+    function getITValue(itGrade, nominal) {
+        let rangeIdx = 3;
+        if (nominal <= 6) rangeIdx = 0;
+        else if (nominal <= 10) rangeIdx = 1;
+        else if (nominal <= 18) rangeIdx = 2;
+        else if (nominal <= 30) rangeIdx = 3;
+        else if (nominal <= 50) rangeIdx = 4;
+        else if (nominal <= 80) rangeIdx = 5;
+        else if (nominal <= 120) rangeIdx = 6;
+
+        const IT_TABLE = {
+            6: [8, 9, 11, 13, 16, 19, 22],
+            7: [12, 15, 18, 21, 25, 30, 35],
+            8: [18, 22, 27, 33, 39, 46, 54],
+            9: [30, 36, 43, 52, 62, 74, 87],
+            10: [48, 58, 70, 84, 100, 120, 140]
+        };
+
+        return (IT_TABLE[itGrade] && IT_TABLE[itGrade][rangeIdx]) ? IT_TABLE[itGrade][rangeIdx] : 25;
+    }
+
+    function calculateISODeviations(symbol, type, nominal) {
+        const it = parseInt(symbol.replace(/[^0-9]/g, '')) || 7;
+        const letter = symbol.replace(/[0-9]/g, '');
+        const itVal = getITValue(it, nominal);
+
+        let ES = 0, EI = 0;
+
+        if (type === 'HOLE') {
+            switch (letter) {
+                case 'H': EI = 0; ES = itVal; break;
+                case 'JS': ES = Math.round(itVal / 2); EI = -Math.round(itVal / 2); break;
+                case 'K': ES = Math.round(itVal * 0.2); EI = ES - itVal; break;
+                case 'N': ES = -Math.round(itVal * 0.3); EI = ES - itVal; break;
+                case 'P': ES = -Math.round(itVal * 0.7); EI = ES - itVal; break;
+                case 'F': EI = Math.round(itVal * 0.8); ES = EI + itVal; break;
+                case 'G': EI = Math.round(itVal * 0.3); ES = EI + itVal; break;
+                case 'E': EI = Math.round(itVal * 1.5); ES = EI + itVal; break;
+                case 'D': EI = Math.round(itVal * 2.2); ES = EI + itVal; break;
+                default: EI = 0; ES = itVal;
+            }
+        } else {
+            switch (letter) {
+                case 'h': ES = 0; EI = -itVal; break;
+                case 'f': ES = -Math.round(itVal * 0.6); EI = ES - itVal; break;
+                case 'g': ES = -Math.round(itVal * 0.25); EI = ES - itVal; break;
+                case 'js': ES = Math.round(itVal / 2); EI = -Math.round(itVal / 2); break;
+                case 'k': EI = Math.round(itVal * 0.1); ES = EI + itVal; break;
+                case 'm': EI = Math.round(itVal * 0.4); ES = EI + itVal; break;
+                case 'p': EI = Math.round(itVal * 0.8); ES = EI + itVal; break;
+                case 'r': EI = Math.round(itVal * 1.3); ES = EI + itVal; break;
+                case 's': EI = Math.round(itVal * 1.8); ES = EI + itVal; break;
+                default: ES = 0; EI = -itVal;
+            }
+        }
+
+        return {
+            ES_um: ES,
+            EI_um: EI,
+            IT_um: itVal,
+            ES_mm: ES / 1000,
+            EI_mm: EI / 1000,
+            IT_mm: itVal / 1000,
+            dMax: nominal + (ES / 1000),
+            dMin: nominal + (EI / 1000)
+        };
+    }
+
+    const state = {
+        currentType: 'HOLE',
+        selectedPlanIndex: 0,
+        nominalDiameter: 50,
+        showGrid: true
+    };
+
+    let scene, camera, renderer, controls;
+    let axesScene, axesCamera, axesRenderer, axesHelper;
+    let modelGroup, dimensionGroup, gridHelper;
+
+    let btnTypeHole, btnTypeShaft, sliderNominal, nominalDisplay, catalogContainer, catalogCountBadge, btnReset, threeContainer, cotaOverlay, cotaOverlayText, cotaOverlaySub;
+    let rightDesignationTitle, rightElementBadge, rightSubtitleDesc, calcNominal, calcItGrade, calcEs, calcEsUm, calcEi, calcEiUm, calcTolerance, calcToleranceUm, calcDmax, calcDmin, lblEs, lblEi, lblDmax, lblDmin;
+    let explainLetterTag, explainLetterText, explainNumberTag, explainNumberText, conditionLimitsDisplay, gaugePassVal, gaugeNoPassVal, industrialAppText;
+
+    const QUIZ_QUESTIONS = [
+        {
+            id: 1, type: 'HOLE', qType: 'COTA_TO_LIMITS', title: 'Pregunta 1 (Agujero): Dimensión Máxima y Mínima',
+            desc: 'A partir del plano 2D técnico mostrado, calcule la dimensión máxima (<i>D</i><sub>máx</sub>) y la dimensión mínima (<i>D</i><sub>mín</sub>) para la cota del agujero.',
+            cota: 'Ø40 H7', nominal: 40, isoTag: 'H7', svgType: 'HOLE',
+            options: [
+                { id: 'A', text: 'Dmáx = 40.025 mm  |  Dmín = 40.000 mm', correct: true },
+                { id: 'B', text: 'Dmáx = 40.000 mm  |  Dmín = 39.975 mm', correct: false },
+                { id: 'C', text: 'Dmáx = 40.015 mm  |  Dmín = 39.985 mm', correct: false },
+                { id: 'D', text: 'Dmáx = 40.050 mm  |  Dmín = 40.025 mm', correct: false }
+            ],
+            rationale: 'Para Ø40 H7 (Agujero base): Posición H fija la Desviación Inferior EI = 0.000 mm. La calidad IT7 para Ø40mm asigna una tolerancia de 25 µm (+0.025 mm). Por lo tanto: Dmáx = 40.025 mm y Dmín = 40.000 mm.'
+        },
+        {
+            id: 2, type: 'HOLE', qType: 'COTA_TO_LIMITS', title: 'Pregunta 2 (Agujero): Desviaciones en Ajuste con Juego',
+            desc: 'Observe el plano 2D para la cota de agujero Ø30 F8. Determine los valores de las desviaciones superior (<i>ES</i>) e inferior (<i>EI</i>).',
+            cota: 'Ø30 F8', nominal: 30, isoTag: 'F8', svgType: 'HOLE',
+            options: [
+                { id: 'A', text: 'ES = +0.020 mm  |  EI = 0.000 mm', correct: false },
+                { id: 'B', text: 'ES = +0.053 mm  |  EI = +0.020 mm', correct: true },
+                { id: 'C', text: 'ES = +0.033 mm  |  EI = -0.010 mm', correct: false },
+                { id: 'D', text: 'ES = +0.010 mm  |  EI = -0.023 mm', correct: false }
+            ],
+            rationale: 'Para Ø30 F8: La letra F ubica la zona sobre la línea cero con una Desviación Inferior EI = +20 µm (+0.020 mm). La tolerancia IT8 es 33 µm, sumando ES = EI + IT = +53 µm (+0.053 mm).'
+        },
+        {
+            id: 3, type: 'HOLE', qType: 'COTA_TO_LIMITS', title: 'Pregunta 3 (Agujero): Cota Simétrica JS7',
+            desc: 'Analice el agujero con la cota ISO Ø50 JS7. ¿Cuál es el rango límite de tolerancia aceptable?',
+            cota: 'Ø50 JS7', nominal: 50, isoTag: 'JS7', svgType: 'HOLE',
+            options: [
+                { id: 'A', text: 'Dmáx = 50.025 mm  |  Dmín = 50.000 mm', correct: false },
+                { id: 'B', text: 'Dmáx = 50.012 mm  |  Dmín = 49.988 mm', correct: true },
+                { id: 'C', text: 'Dmáx = 50.025 mm  |  Dmín = 49.975 mm', correct: false },
+                { id: 'D', text: 'Dmáx = 50.050 mm  |  Dmín = 49.950 mm', correct: false }
+            ],
+            rationale: 'Las posiciones JS / js son simétricas respecto a la línea cero (±IT/2). Para Ø50mm con IT7 (25 µm), la tolerancia se reparte como ±12.5 µm (±0.0125 mm ≈ ±0.012 mm). Dmáx = 50.012 mm y Dmín = 49.988 mm.'
+        },
+        {
+            id: 4, type: 'SHAFT', qType: 'COTA_TO_LIMITS', title: 'Pregunta 4 (Eje): Dimensión Límites Eje h6',
+            desc: 'Dado el plano 2D para un eje con cota nominal Ø20 h6. ¿Cuáles son sus dimensiones límites permisibles (<i>d</i><sub>máx</sub> y <i>d</i><sub>mín</sub>)?',
+            cota: 'Ø20 h6', nominal: 20, isoTag: 'h6', svgType: 'SHAFT',
+            options: [
+                { id: 'A', text: 'dmáx = 20.000 mm  |  dmín = 19.987 mm', correct: true },
+                { id: 'B', text: 'dmáx = 20.013 mm  |  dmín = 20.000 mm', correct: false },
+                { id: 'C', text: 'dmáx = 19.987 mm  |  dmín = 19.974 mm', correct: false },
+                { id: 'D', text: 'dmáx = 20.006 mm  |  dmín = 19.994 mm', correct: false }
+            ],
+            rationale: 'Para Ø20 h6 (Eje base): La posición h fija la Desviación Superior es = 0.000 mm. La calidad IT6 para Ø20mm es 13 µm (0.013 mm), luego ei = -0.013 mm. Por lo tanto, dmáx = 20.000 mm y dmín = 19.987 mm.'
+        },
+        {
+            id: 5, type: 'SHAFT', qType: 'COTA_TO_LIMITS', title: 'Pregunta 5 (Eje): Desviación en Ajuste Deslizante f7',
+            desc: 'Para la cota de eje Ø60 f7 en el plano 2D, calcule la dimensión máxima y mínima de mecanizado.',
+            cota: 'Ø60 f7', nominal: 60, isoTag: 'f7', svgType: 'SHAFT',
+            options: [
+                { id: 'A', text: 'dmáx = 60.000 mm  |  dmín = 59.970 mm', correct: false },
+                { id: 'B', text: 'dmáx = 59.970 mm  |  dmín = 59.940 mm', correct: true },
+                { id: 'C', text: 'dmáx = 60.030 mm  |  dmín = 60.000 mm', correct: false },
+                { id: 'D', text: 'dmáx = 59.982 mm  |  dmín = 59.952 mm', correct: false }
+            ],
+            rationale: 'Para Ø60 f7: La posición f otorga una Desviación Superior es = -30 µm (-0.030 mm). La tolerancia IT7 es 30 µm, con lo cual ei = -60 µm (-0.060 mm). Así, dmáx = 59.970 mm y dmín = 59.940 mm.'
+        },
+        {
+            id: 6, type: 'SHAFT', qType: 'COTA_TO_LIMITS', title: 'Pregunta 6 (Eje): Ajuste de Interferencia / Apremio p6',
+            desc: 'Identifique las cotas límites del eje en el plano 2D con cota ISO Ø30 p6.',
+            cota: 'Ø30 p6', nominal: 30, isoTag: 'p6', svgType: 'SHAFT',
+            options: [
+                { id: 'A', text: 'dmáx = 30.035 mm  |  dmín = 30.022 mm', correct: true },
+                { id: 'B', text: 'dmáx = 30.022 mm  |  dmín = 30.000 mm', correct: false },
+                { id: 'C', text: 'dmáx = 30.000 mm  |  dmín = 29.987 mm', correct: false },
+                { id: 'D', text: 'dmáx = 30.013 mm  |  dmín = 29.987 mm', correct: false }
+            ],
+            rationale: 'Para Ø30 p6 (Eje en apremio): La posición p está completamente sobre la línea cero con ei = +22 µm (+0.022 mm). Sumando IT6 (13 µm), resulta es = +35 µm (+0.035 mm). Así, dmáx = 30.035 mm y dmín = 30.022 mm.'
+        },
+        {
+            id: 7, type: 'HOLE', qType: 'LIMITS_TO_COTA', title: 'Pregunta 7 (Agujero): Identificar Designación ISO',
+            desc: 'Un agujero con medida nominal Ø25 mm tiene límites inspeccionados de <i>D</i><sub>máx</sub> = 25.021 mm y <i>D</i><sub>mín</sub> = 25.000 mm. ¿Cuál es su notación de tolerancia ISO oficial?',
+            cota: 'Ø25 (25.000 - 25.021 mm)', nominal: 25, limitsText: 'Dmáx = 25.021 mm | Dmín = 25.000 mm', svgType: 'HOLE_LIMITS',
+            options: [
+                { id: 'A', text: 'Ø25 H7', correct: true },
+                { id: 'B', text: 'Ø25 H8', correct: false },
+                { id: 'C', text: 'Ø25 F7', correct: false },
+                { id: 'D', text: 'Ø25 JS7', correct: false }
+            ],
+            rationale: 'Como Dmín = N (25.000 mm), la Desviación Inferior EI = 0 (Posición H). La tolerancia T = 0.021 mm (21 µm), correspondiente a la calidad IT7 para el rango de 18 a 30 mm. Por lo tanto, es Ø25 H7.'
+        },
+        {
+            id: 8, type: 'HOLE', qType: 'LIMITS_TO_COTA', title: 'Pregunta 8 (Agujero): Tolerancia Fina con Desviación Positiva',
+            desc: 'Un casquillo rectificado de medida nominal Ø50 mm tiene como especificación de fabricación <i>D</i><sub>máx</sub> = 50.034 mm y <i>D</i><sub>mín</sub> = 50.009 mm. ¿A qué cota ISO corresponde?',
+            cota: 'Ø50 (50.009 - 50.034 mm)', nominal: 50, limitsText: 'Dmáx = 50.034 mm | Dmín = 50.009 mm', svgType: 'HOLE_LIMITS',
+            options: [
+                { id: 'A', text: 'Ø50 G7', correct: true },
+                { id: 'B', text: 'Ø50 H7', correct: false },
+                { id: 'C', text: 'Ø50 F8', correct: false },
+                { id: 'D', text: 'Ø50 K7', correct: false }
+            ],
+            rationale: 'EI = 50.009 - 50 = +0.009 mm (+9 µm) correspondiente a la posición G. La tolerancia T = 34 - 9 = 25 µm que es IT7. Notación correcta: Ø50 G7.'
+        },
+        {
+            id: 9, type: 'SHAFT', qType: 'LIMITS_TO_COTA', title: 'Pregunta 9 (Eje): Identificar Designación Eje Base',
+            desc: 'Un eje de precisión nominal Ø10 mm fabricado en torno CNC arroja dimensiones de <i>d</i><sub>máx</sub> = 10.000 mm y <i>d</i><sub>mín</sub> = 9.991 mm. Seleccione la cota ISO:',
+            cota: 'Ø10 (9.991 - 10.000 mm)', nominal: 10, limitsText: 'dmáx = 10.000 mm | dmín = 9.991 mm', svgType: 'SHAFT_LIMITS',
+            options: [
+                { id: 'A', text: 'Ø10 h6', correct: true },
+                { id: 'B', text: 'Ø10 h7', correct: false },
+                { id: 'C', text: 'Ø10 g6', correct: false },
+                { id: 'D', text: 'Ø10 f7', correct: false }
+            ],
+            rationale: 'Como dmáx = N (10.000 mm), es = 0 (Posición h). La tolerancia T = 10.000 - 9.991 = 0.009 mm (9 µm), exigida por la calidad IT6 en la gama de 6 a 10 mm. Cota ISO: Ø10 h6.'
+        },
+        {
+            id: 10, type: 'SHAFT', qType: 'LIMITS_TO_COTA', title: 'Pregunta 10 (Eje): Identificar Ajuste Prensado / Interferencia',
+            desc: 'Un pasador rectificado Ø18 mm tiene cotas <i>d</i><sub>máx</sub> = 18.029 mm y <i>d</i><sub>mín</sub> = 18.018 mm. Determine la designación de tolerancia ISO:',
+            cota: 'Ø18 (18.018 - 18.029 mm)', nominal: 18, limitsText: 'dmáx = 18.029 mm | dmín = 18.018 mm', svgType: 'SHAFT_LIMITS',
+            options: [
+                { id: 'A', text: 'Ø18 m6', correct: false },
+                { id: 'B', text: 'Ø18 n6', correct: false },
+                { id: 'C', text: 'Ø18 p6', correct: true },
+                { id: 'D', text: 'Ø18 k6', correct: false }
+            ],
+            rationale: 'ei = 18.018 - 18 = +0.018 mm (+18 µm) correspondiente a la posición de interferencia p. Tolerancia T = 29 - 18 = 11 µm (IT6 para Ø18mm). Designación: Ø18 p6.'
+        }
+    ];
+
+    let userQuizAnswers = {};
+    let isQuizSubmitted = false;
+
+    function bindDOMElements() {
+        btnTypeHole = document.getElementById('btn-type-hole');
+        btnTypeShaft = document.getElementById('btn-type-shaft');
+        sliderNominal = document.getElementById('slider-nominal');
+        nominalDisplay = document.getElementById('nominal-display');
+        catalogContainer = document.getElementById('plans-catalog-container');
+        catalogCountBadge = document.getElementById('catalog-count-badge');
+        btnReset = document.getElementById('btn-reset');
+        threeContainer = document.getElementById('threejs-container');
+        cotaOverlay = document.getElementById('cota-3d-overlay');
+        cotaOverlayText = document.getElementById('cota-overlay-text');
+        cotaOverlaySub = document.getElementById('cota-overlay-sub');
+
+        rightDesignationTitle = document.getElementById('right-designation-title');
+        rightElementBadge = document.getElementById('right-element-badge');
+        rightSubtitleDesc = document.getElementById('right-subtitle-desc');
+        calcNominal = document.getElementById('calc-nominal');
+        calcItGrade = document.getElementById('calc-it-grade');
+        calcEs = document.getElementById('calc-es');
+        calcEsUm = document.getElementById('calc-es-um');
+        calcEi = document.getElementById('calc-ei');
+        calcEiUm = document.getElementById('calc-ei-um');
+        calcTolerance = document.getElementById('calc-tolerance');
+        calcToleranceUm = document.getElementById('calc-tolerance-um');
+        calcDmax = document.getElementById('calc-dmax');
+        calcDmin = document.getElementById('calc-dmin');
+        lblEs = document.getElementById('lbl-es');
+        lblEi = document.getElementById('lbl-ei');
+        lblDmax = document.getElementById('lbl-dmax');
+        lblDmin = document.getElementById('lbl-dmin');
+
+        explainLetterTag = document.getElementById('explain-letter-tag');
+        explainLetterText = document.getElementById('explain-letter-text');
+        explainNumberTag = document.getElementById('explain-number-tag');
+        explainNumberText = document.getElementById('explain-number-text');
+        conditionLimitsDisplay = document.getElementById('condition-limits-display');
+        gaugePassVal = document.getElementById('gauge-pass-val');
+        gaugeNoPassVal = document.getElementById('gauge-nopass-val');
+        industrialAppText = document.getElementById('industrial-application-text');
+    }
+
+    function generate2DTechnicalDrawingSVG(q) {
+        const width = 340;
+        const height = 100;
+
+        if (q.svgType === 'HOLE' || q.svgType === 'HOLE_LIMITS') {
+            const labelText = q.qType === 'COTA_TO_LIMITS' ? q.cota : q.limitsText;
+            return `
+                <svg viewBox="0 0 ${width} ${height}" class="w-full h-auto bg-slate-50 border border-slate-200 rounded-xl shadow-inner font-mono">
+                    <defs>
+                        <pattern id="hatch" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                            <line x1="0" y1="0" x2="0" y2="8" stroke="#94a3b8" stroke-width="1.2" />
+                        </pattern>
+                        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                            <path d="M 0 1 L 10 5 L 0 9 z" fill="#0067c0" />
+                        </marker>
+                    </defs>
+                    <rect x="30" y="10" width="280" height="22" fill="url(#hatch)" stroke="#475569" stroke-width="1.5" />
+                    <rect x="30" y="68" width="280" height="22" fill="url(#hatch)" stroke="#475569" stroke-width="1.5" />
+                    <line x1="15" y1="50" x2="325" y2="50" stroke="#0067c0" stroke-width="1.2" stroke-dasharray="12,3,3,3" />
+                    <rect x="30" y="32" width="280" height="36" fill="#f8fafc" stroke="none" />
+                    <line x1="30" y1="32" x2="310" y2="32" stroke="#1e293b" stroke-width="2" />
+                    <line x1="30" y1="68" x2="310" y2="68" stroke="#1e293b" stroke-width="2" />
+                    <line x1="280" y1="32" x2="280" y2="8" stroke="#64748b" stroke-width="1" stroke-dasharray="3,3" />
+                    <line x1="280" y1="68" x2="280" y2="92" stroke="#64748b" stroke-width="1" stroke-dasharray="3,3" />
+                    <line x1="270" y1="32" x2="270" y2="68" stroke="#0067c0" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+                    <rect x="195" y="41" width="140" height="18" rx="5" fill="#ffffff" stroke="#c084fc" stroke-width="1.2" />
+                    <text x="265" y="53.5" font-size="8.5" font-weight="bold" fill="#7e22ce" text-anchor="middle">${labelText}</text>
+                </svg>
+            `;
+        } else {
+            const labelText = q.qType === 'COTA_TO_LIMITS' ? q.cota : q.limitsText;
+            return `
+                <svg viewBox="0 0 ${width} ${height}" class="w-full h-auto bg-slate-50 border border-slate-200 rounded-xl shadow-inner font-mono">
+                    <defs>
+                        <marker id="arrow-shaft" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                            <path d="M 0 1 L 10 5 L 0 9 z" fill="#0067c0" />
+                        </marker>
+                    </defs>
+                    <rect x="60" y="24" width="180" height="52" fill="#e2e8f0" stroke="#334155" stroke-width="2" rx="3" />
+                    <rect x="20" y="14" width="40" height="72" fill="#cbd5e1" stroke="#334155" stroke-width="2" rx="2" />
+                    <line x1="10" y1="50" x2="330" y2="50" stroke="#0067c0" stroke-width="1.2" stroke-dasharray="12,3,3,3" />
+                    <line x1="240" y1="24" x2="305" y2="24" stroke="#64748b" stroke-width="1" stroke-dasharray="3,3" />
+                    <line x1="240" y1="76" x2="305" y2="76" stroke="#64748b" stroke-width="1" stroke-dasharray="3,3" />
+                    <line x1="290" y1="24" x2="290" y2="76" stroke="#0067c0" stroke-width="1.5" marker-start="url(#arrow-shaft)" marker-end="url(#arrow-shaft)" />
+                    <rect x="195" y="41" width="140" height="18" rx="5" fill="#ffffff" stroke="#10b981" stroke-width="1.2" />
+                    <text x="265" y="53.5" font-size="8.5" font-weight="bold" fill="#047857" text-anchor="middle">${labelText}</text>
+                </svg>
+            `;
+        }
+    }
+
+    function renderQuizEvaluation() {
+        const container = document.getElementById('quiz-questions-container');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        QUIZ_QUESTIONS.forEach((q, idx) => {
+            const card = document.createElement('div');
+            card.className = "fluent-card p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3 bg-white";
+
+            const selectedOpt = userQuizAnswers[q.id];
+
+            let feedbackClass = "";
+            if (isQuizSubmitted) {
+                const isCorrect = selectedOpt && q.options.find(o => o.id === selectedOpt)?.correct;
+                feedbackClass = isCorrect ? "border-emerald-400 bg-emerald-50/20" : "border-rose-400 bg-rose-50/20";
+            }
+
+            if (feedbackClass) card.className += ` ${feedbackClass}`;
+
+            const badgeColor = q.type === 'HOLE' ? 'bg-purple-100 text-purple-800 border-purple-200' : 'bg-emerald-100 text-emerald-800 border-emerald-200';
+
+            card.innerHTML = `
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-bold font-mono px-2.5 py-0.5 rounded-full border ${badgeColor}">
+                            ${q.type === 'HOLE' ? 'AGUJERO' : 'EJE'}
+                        </span>
+                        <span class="text-[11px] font-mono text-slate-400 font-bold">Item ${idx + 1} / 10</span>
+                    </div>
+
+                    <h3 class="text-xs font-bold text-slate-800 leading-snug">${q.title}</h3>
+                    <p class="text-[11px] text-slate-600 leading-relaxed">${q.desc}</p>
+
+                    <div class="pt-1">
+                        ${generate2DTechnicalDrawingSVG(q)}
+                    </div>
+
+                    <div class="space-y-1.5 pt-2 font-mono text-xs">
+                        ${q.options.map(opt => {
+                            const isChecked = selectedOpt === opt.id;
+                            let btnStyle = "bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700";
+
+                            if (isChecked) {
+                                btnStyle = "bg-blue-50 border-[#0067c0] text-[#0067c0] font-bold ring-1 ring-[#0067c0]";
+                            }
+
+                            if (isQuizSubmitted) {
+                                if (opt.correct) {
+                                    btnStyle = "bg-emerald-100 border-emerald-500 text-emerald-900 font-bold";
+                                } else if (isChecked && !opt.correct) {
+                                    btnStyle = "bg-rose-100 border-rose-500 text-rose-900 font-bold line-through";
+                                }
+                            }
+
+                            return `
+                                <button onclick="selectQuizOption(${q.id}, '${opt.id}')" ${isQuizSubmitted ? 'disabled' : ''} 
+                                    class="w-full text-left p-2.5 rounded-xl border transition flex items-center justify-between text-[11px] ${btnStyle}">
+                                    <span><strong class="mr-1.5 text-slate-400">${opt.id})</strong> ${opt.text}</span>
+                                    ${isChecked ? '<i data-lucide="check-circle-2" class="w-4 h-4 text-[#0067c0]"></i>' : ''}
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+
+                ${isQuizSubmitted ? `
+                    <div class="pt-2 border-t border-slate-200 text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded-xl">
+                        <strong class="text-slate-800 flex items-center gap-1 mb-1 font-sans">
+                            <i data-lucide="info" class="w-3.5 h-3.5 text-[#0067c0]"></i> Justificación Técnica:
+                        </strong>
+                        <p class="leading-relaxed font-sans text-[10.5px]">${q.rationale}</p>
+                    </div>
+                ` : ''}
+            `;
+
+            container.appendChild(card);
+        });
+
+        lucide.createIcons();
+    }
+
+    window.selectQuizOption = function(qId, optId) {
+        if (isQuizSubmitted) return;
+        userQuizAnswers[qId] = optId;
+        renderQuizEvaluation();
+    };
+
+    function gradeEvaluation() {
+        let correctCount = 0;
+        
+        QUIZ_QUESTIONS.forEach(q => {
+            const userAns = userQuizAnswers[q.id];
+            const correctOpt = q.options.find(o => o.correct)?.id;
+            if (userAns && userAns === correctOpt) {
+                correctCount++;
+            }
+        });
+
+        isQuizSubmitted = true;
+        renderQuizEvaluation();
+
+        const resultsBanner = document.getElementById('eval-results-banner');
+        const scoreBadge = document.getElementById('eval-score-badge');
+        const resultTitle = document.getElementById('eval-result-title');
+        const resultSub = document.getElementById('eval-result-sub');
+        const percentage = document.getElementById('eval-percentage');
+
+        resultsBanner.classList.remove('hidden');
+
+        const scorePercent = (correctCount / QUIZ_QUESTIONS.length) * 100;
+        scoreBadge.textContent = `${correctCount}/${QUIZ_QUESTIONS.length}`;
+        percentage.textContent = `${scorePercent}%`;
+
+        if (correctCount >= 8) {
+            resultTitle.textContent = "¡Excelente Desempeño Metrológico!";
+            resultSub.textContent = "Has demostrado un dominio completo en la lectura e interpretación de tolerancias ISO 286 para agujeros y ejes.";
+            scoreBadge.className = "w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center justify-center font-mono font-bold text-lg";
+        } else if (correctCount >= 5) {
+            resultTitle.textContent = "Aprobado - Nivel Intermedio";
+            resultSub.textContent = "Buen trabajo. Revisa los items incorrectos y consulta la pestaña 'Tablas ISO' para reforzar los conceptos.";
+            scoreBadge.className = "w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 border border-amber-300 flex items-center justify-center font-mono font-bold text-lg";
+        } else {
+            resultTitle.textContent = "Requiere Repaso Técnico";
+            resultSub.textContent = "Te sugerimos practicar en el Visor 3D de la pestaña 'Interpretación' y volver a intentar el cuestionario.";
+            scoreBadge.className = "w-12 h-12 rounded-2xl bg-rose-100 text-rose-800 border border-rose-300 flex items-center justify-center font-mono font-bold text-lg";
+        }
+    }
+
+    function restartEvaluation() {
+        userQuizAnswers = {};
+        isQuizSubmitted = false;
+        document.getElementById('eval-results-banner').classList.add('hidden');
+        renderQuizEvaluation();
+    }
+
+    function initApp() {
+        bindDOMElements();
+        initThreeJS();
+        setupEventListeners();
+        setupTabNavigation();
+        renderCatalog();
+        updateAll();
+    }
+
+    function renderCatalog() {
+        const catalog = state.currentType === 'HOLE' ? ISO_DATA.HOLES : ISO_DATA.SHAFTS;
+        catalogCountBadge.textContent = `Mostrando ${catalog.length} ${state.currentType === 'HOLE' ? 'Agujeros' : 'Ejes'}`;
+        catalogContainer.innerHTML = '';
+
+        catalog.forEach((item, index) => {
+            const isSelected = index === state.selectedPlanIndex;
+            const card = document.createElement('div');
+            card.className = `p-2.5 rounded-xl border transition cursor-pointer flex items-center justify-between text-xs ${
+                isSelected 
+                    ? (state.currentType === 'HOLE' ? 'bg-purple-50 border-purple-300 text-purple-950 font-bold shadow-xs' : 'bg-emerald-50 border-emerald-300 text-emerald-950 font-bold shadow-xs')
+                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+            }`;
+
+            card.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <span class="font-mono text-xs ${state.currentType === 'HOLE' ? 'text-purple-700' : 'text-emerald-700'}">${item.symbol}</span>
+                    <span class="text-[11px] truncate max-w-[140px]">${item.name}</span>
+                </div>
+                <i data-lucide="${isSelected ? 'check-circle-2' : 'chevron-right'}" class="w-3.5 h-3.5 ${isSelected ? (state.currentType === 'HOLE' ? 'text-purple-600' : 'text-emerald-600') : 'text-slate-300'}"></i>
+            `;
+
+            card.addEventListener('click', () => {
+                state.selectedPlanIndex = index;
+                renderCatalog();
+                updateAll();
+            });
+
+            catalogContainer.appendChild(card);
+        });
+
+        lucide.createIcons();
+    }
+
+    function setupEventListeners() {
+        btnTypeHole.addEventListener('click', () => {
+            if (state.currentType === 'HOLE') return;
+            state.currentType = 'HOLE';
+            state.selectedPlanIndex = 0;
+            btnTypeHole.className = 'type-btn active flex items-center justify-center gap-2 py-2 px-3 rounded-lg font-semibold text-xs transition bg-white text-purple-700 border border-purple-200 shadow-sm';
+            btnTypeShaft.className = 'type-btn flex items-center justify-center gap-2 py-2 px-3 rounded-lg font-semibold text-xs text-slate-500 hover:text-slate-800 transition border border-transparent';
+            renderCatalog();
+            updateAll();
+        });
+
+        btnTypeShaft.addEventListener('click', () => {
+            if (state.currentType === 'SHAFT') return;
+            state.currentType = 'SHAFT';
+            state.selectedPlanIndex = 0;
+            btnTypeShaft.className = 'type-btn active flex items-center justify-center gap-2 py-2 px-3 rounded-lg font-semibold text-xs transition bg-white text-emerald-700 border border-emerald-200 shadow-sm';
+            btnTypeHole.className = 'type-btn flex items-center justify-center gap-2 py-2 px-3 rounded-lg font-semibold text-xs text-slate-500 hover:text-slate-800 transition border border-transparent';
+            renderCatalog();
+            updateAll();
+        });
+
+        sliderNominal.addEventListener('input', (e) => {
+            state.nominalDiameter = parseFloat(e.target.value);
+            nominalDisplay.textContent = `Ø ${state.nominalDiameter.toFixed(2)} mm`;
+            updateAll();
+        });
+
+        btnReset.addEventListener('click', () => {
+            state.nominalDiameter = 50;
+            sliderNominal.value = 50;
+            nominalDisplay.textContent = 'Ø 50.00 mm';
+            state.selectedPlanIndex = 0;
+            controls.reset();
+            camera.position.set(100, 80, 120);
+            renderCatalog();
+            updateAll();
+        });
+
+        const btnToggleGrid = document.getElementById('btn-toggle-grid');
+        const lblGridToggle = document.getElementById('lbl-grid-toggle');
+        btnToggleGrid.addEventListener('click', () => {
+            state.showGrid = !state.showGrid;
+            gridHelper.visible = state.showGrid;
+            lblGridToggle.textContent = `Parrilla: ${state.showGrid ? 'ON' : 'OFF'}`;
+        });
+
+        document.getElementById('cam-iso').addEventListener('click', () => {
+            camera.position.set(100, 80, 120);
+            controls.target.set(0, 0, 0);
+        });
+        document.getElementById('cam-front').addEventListener('click', () => {
+            camera.position.set(0, 0, 180);
+            controls.target.set(0, 0, 0);
+        });
+        document.getElementById('cam-side').addEventListener('click', () => {
+            camera.position.set(180, 0, 0);
+            controls.target.set(0, 0, 0);
+        });
+        document.getElementById('cam-top').addEventListener('click', () => {
+            camera.position.set(0, 180, 0);
+            controls.target.set(0, 0, 0);
+        });
+    }
+
+    function updateAll() {
+        const list = state.currentType === 'HOLE' ? ISO_DATA.HOLES : ISO_DATA.SHAFTS;
+        const currentPlan = list[state.selectedPlanIndex] || list[0];
+        const nominal = state.nominalDiameter;
+        const dev = calculateISODeviations(currentPlan.symbol, currentPlan.type, nominal);
+
+        const signEs = dev.ES_um >= 0 ? '+' : '';
+        const signEi = dev.EI_um >= 0 ? '+' : '';
+
+        rightDesignationTitle.innerHTML = `Ø${nominal}<sup>${currentPlan.symbol}</sup>`;
+        rightElementBadge.textContent = state.currentType === 'HOLE' ? 'AGUJERO' : 'EJE';
+        rightElementBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+            state.currentType === 'HOLE' 
+                ? 'bg-purple-50 text-purple-700 border border-purple-200' 
+                : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+        }`;
+        rightSubtitleDesc.textContent = currentPlan.desc;
+
+        calcNominal.textContent = `${nominal.toFixed(3)} mm`;
+        calcItGrade.textContent = `IT${currentPlan.it} (${dev.IT_um} µm)`;
+        calcEs.textContent = `${signEs}${dev.ES_mm.toFixed(3)} mm`;
+        calcEsUm.textContent = `${signEs}${dev.ES_um} µm`;
+        calcEi.textContent = `${signEi}${dev.EI_mm.toFixed(3)} mm`;
+        calcEiUm.textContent = `${signEi}${dev.EI_um} µm`;
+
+        calcTolerance.textContent = `${dev.IT_mm.toFixed(3)} mm`;
+        calcToleranceUm.textContent = `${dev.IT_um} µm`;
+
+        if (state.currentType === 'HOLE') {
+            lblEs.innerHTML = 'DESV. SUPERIOR (ES)';
+            lblEi.innerHTML = 'DESV. INFERIOR (EI)';
+            lblDmax.innerHTML = 'DIMENSIÓN MÁX. (<i>D</i><sub>máx</sub>)';
+            lblDmin.innerHTML = 'DIMENSIÓN MÍN. (<i>D</i><sub>mín</sub>)';
+        } else {
+            lblEs.innerHTML = 'DESV. SUPERIOR (es)';
+            lblEi.innerHTML = 'DESV. INFERIOR (ei)';
+            lblDmax.innerHTML = 'DIMENSIÓN MÁX. (<i>d</i><sub>máx</sub>)';
+            lblDmin.innerHTML = 'DIMENSIÓN MÍN. (<i>d</i><sub>mín</sub>)';
+        }
+
+        calcDmax.textContent = `${dev.dMax.toFixed(3)} mm`;
+        calcDmin.textContent = `${dev.dMin.toFixed(3)} mm`;
+
+        explainLetterTag.textContent = `Posición '${currentPlan.pos}'`;
+        explainNumberTag.textContent = `Calidad IT${currentPlan.it}`;
+
+        const planCanvasTitle = document.getElementById('canvas-title-plan');
+        if (planCanvasTitle) {
+            planCanvasTitle.innerHTML = `PLANO 3D: COTA ISO Ø${nominal}<sup>${currentPlan.symbol}</sup>`;
+        }
+
+        updateOverlayPosition();
+    }
+
+    function setupTabNavigation() {
+        const btnTabInterpretation = document.getElementById('nav-tab-interpretation');
+        const btnTabTables = document.getElementById('nav-tab-tables');
+        const btnTabEval = document.getElementById('nav-tab-eval');
+
+        const tabInterpretation = document.getElementById('tab-content-interpretation');
+        const tabTables = document.getElementById('tab-content-tables');
+        const tabEval = document.getElementById('tab-content-eval');
+
+        btnTabInterpretation.addEventListener('click', () => {
+            btnTabInterpretation.classList.add('active');
+            btnTabTables.classList.remove('active');
+            btnTabEval.classList.remove('active');
+
+            tabInterpretation.classList.remove('hidden');
+            tabTables.classList.add('hidden');
+            tabEval.classList.add('hidden');
+            onWindowResize();
+        });
+
+        btnTabTables.addEventListener('click', () => {
+            btnTabTables.classList.add('active');
+            btnTabInterpretation.classList.remove('active');
+            btnTabEval.classList.remove('active');
+
+            tabTables.classList.remove('hidden');
+            tabInterpretation.classList.add('hidden');
+            tabEval.classList.add('hidden');
+        });
+
+        btnTabEval.addEventListener('click', () => {
+            btnTabEval.classList.add('active');
+            btnTabInterpretation.classList.remove('active');
+            btnTabTables.classList.remove('active');
+
+            tabEval.classList.remove('hidden');
+            tabInterpretation.classList.add('hidden');
+            tabTables.classList.add('hidden');
+        });
+
+        document.getElementById('btn-submit-eval').addEventListener('click', gradeEvaluation);
+        document.getElementById('btn-restart-eval').addEventListener('click', restartEvaluation);
+    }
+
+    function initThreeJS() {
+        const width = threeContainer.clientWidth;
+        const height = threeContainer.clientHeight;
+
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xf4f6f9);
+
+        camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+        camera.position.set(100, 80, 120);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        threeContainer.appendChild(renderer.domElement);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxDistance = 400;
+        controls.minDistance = 20;
+
+        const axesCanvas = document.getElementById('axes-canvas');
+        axesScene = new THREE.Scene();
+        
+        const axesSize = 1.8;
+        axesCamera = new THREE.OrthographicCamera(-axesSize, axesSize, axesSize, -axesSize, 0.1, 10);
+        axesCamera.position.set(0, 0, 4);
+
+        axesRenderer = new THREE.WebGLRenderer({ canvas: axesCanvas, alpha: true, antialias: true });
+        axesRenderer.setSize(80, 80);
+        axesRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        axesHelper = new THREE.AxesHelper(0.9);
+        axesScene.add(axesHelper);
+
+        function createAxisLabel(text, color) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.font = 'bold 44px Consolas, monospace';
+            ctx.fillStyle = color;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, 32, 32);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            const sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(0.45, 0.45, 1);
+            return sprite;
+        }
+
+        const labelX = createAxisLabel('X', '#ef4444');
+        labelX.position.set(1.25, 0, 0);
+        axesScene.add(labelX);
+
+        const labelY = createAxisLabel('Y', '#10b981');
+        labelY.position.set(0, 1.25, 0);
+        axesScene.add(labelY);
+
+        const labelZ = createAxisLabel('Z', '#3b82f6');
+        labelZ.position.set(0, 0, 1.25);
+        axesScene.add(labelZ);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+        scene.add(ambientLight);
+
+        const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.9);
+        dirLight1.position.set(100, 150, 100);
+        dirLight1.castShadow = true;
+        scene.add(dirLight1);
+
+        const dirLight2 = new THREE.DirectionalLight(0x0067c0, 0.25);
+        dirLight2.position.set(-100, -50, -100);
+        scene.add(dirLight2);
+
+        gridHelper = new THREE.GridHelper(200, 20, 0x0067c0, 0xd1d5db);
+        gridHelper.position.y = -35;
+        scene.add(gridHelper);
+
+        modelGroup = new THREE.Group();
+        dimensionGroup = new THREE.Group();
+        scene.add(modelGroup);
+        scene.add(dimensionGroup);
+
+        window.addEventListener('resize', onWindowResize);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+
+            axesCamera.position.copy(camera.position).sub(controls.target).setLength(4);
+            axesCamera.lookAt(0, 0, 0);
+
+            updateOverlayPosition();
+            renderer.render(scene, camera);
+            axesRenderer.render(axesScene, axesCamera);
+        }
+        animate();
+    }
+
+    function onWindowResize() {
+        if (!threeContainer) return;
+        const width = threeContainer.clientWidth;
+        const height = threeContainer.clientHeight;
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+    }
+
+    function updateOverlayPosition() {
+        if (!cotaOverlay || !dimensionGroup) return;
+
+        const list = state.currentType === 'HOLE' ? ISO_DATA.HOLES : ISO_DATA.SHAFTS;
+        const currentPlan = list[state.selectedPlanIndex] || list[0];
+        const nominal = state.nominalDiameter;
+        const dev = calculateISODeviations(currentPlan.symbol, currentPlan.type, nominal);
+
+        const signEs = dev.ES_um >= 0 ? '+' : '';
+        const signEi = dev.EI_um >= 0 ? '+' : '';
+
+        if (state.currentType === 'HOLE') {
+            explainLetterText.innerHTML = `Letra mayúscula <strong>'${currentPlan.pos}'</strong> indica cota de <strong>AGUJERO</strong>. Posiciona el intervalo de tolerancia respecto a la Línea Cero (ZLN).`;
+        } else {
+            explainLetterText.innerHTML = `Letra minúscula <strong>'${currentPlan.pos}'</strong> indica cota de <strong>EJE</strong>. Establece la desviación fundamental respecto a la Línea Cero (ZLN).`;
+        }
+
+        explainNumberText.innerHTML = `El número <strong>'${currentPlan.it}'</strong> asigna una tolerancia IT${currentPlan.it} = <strong>${dev.IT_um} µm</strong> para la medida nominal Ø${nominal}mm.`;
+
+        conditionLimitsDisplay.innerHTML = `${dev.dMin.toFixed(3)} mm ≤ <i>D</i><sub>real</sub> ≤ ${dev.dMax.toFixed(3)} mm`;
+
+        if (state.currentType === 'HOLE') {
+            gaugePassVal.textContent = `${dev.dMin.toFixed(3)} mm (Dmín)`;
+            gaugeNoPassVal.textContent = `${dev.dMax.toFixed(3)} mm (Dmáx)`;
+        } else {
+            gaugePassVal.textContent = `${dev.dMax.toFixed(3)} mm (dmáx)`;
+            gaugeNoPassVal.textContent = `${dev.dMin.toFixed(3)} mm (dmín)`;
+        }
+
+        industrialAppText.textContent = currentPlan.app;
+
+        cotaOverlayText.innerHTML = `Ø${nominal}<sup class="${state.currentType === 'HOLE' ? 'text-purple-600' : 'text-emerald-600'} ml-0.5">${currentPlan.symbol}</sup>`;
+        cotaOverlaySub.textContent = `${signEs}${dev.ES_mm.toFixed(3)} / ${signEi}${dev.EI_mm.toFixed(3)} mm`;
+
+        const length = nominal * 1.5;
+        let target3DPos = new THREE.Vector3();
+
+        if (state.currentType === 'HOLE') {
+            const frontZ = length / 2 + nominal * 0.3;
+            target3DPos.set(0, 0, frontZ);
+        } else {
+            const xOffset = nominal * 1.1;
+            target3DPos.set(xOffset, 0, 0);
+        }
+
+        const projectedVec = target3DPos.clone().project(camera);
+        const rect = threeContainer.getBoundingClientRect();
+        const x = (projectedVec.x * 0.5 + 0.5) * rect.width;
+        const y = (-(projectedVec.y * 0.5) + 0.5) * rect.height;
+
+        if (projectedVec.z < 1) {
+            cotaOverlay.style.display = 'block';
+            cotaOverlay.style.left = `${x}px`;
+            cotaOverlay.style.top = `${y}px`;
+        } else {
+            cotaOverlay.style.display = 'none';
+        }
+
+        build3DModel(currentPlan, dev, nominal);
+    }
+
+    function build3DModel(plan, dev, nominal) {
+        while(modelGroup.children.length > 0) { 
+            modelGroup.remove(modelGroup.children[0]); 
+        }
+        while(dimensionGroup.children.length > 0) { 
+            dimensionGroup.remove(dimensionGroup.children[0]); 
+        }
+
+        const radius = nominal / 2;
+        const length = nominal * 1.5;
+        const dimColor = 0x0067c0;
+        const lineMat = new THREE.LineBasicMaterial({ color: dimColor, linewidth: 2 });
+        const auxLineMat = new THREE.LineDashedMaterial({
+            color: 0x64748b,
+            dashSize: 2,
+            gapSize: 1.5,
+            linewidth: 1
+        });
+        const arrowHeight = 6;
+        const capGeo = new THREE.ConeGeometry(2, arrowHeight, 12);
+        const capMat = new THREE.MeshBasicMaterial({ color: dimColor });
+
+        if (state.currentType === 'HOLE') {
+            const outerSize = nominal * 1.8;
+            
+            const holeShape = new THREE.Shape();
+            holeShape.moveTo(-outerSize/2, -outerSize/2);
+            holeShape.lineTo(outerSize/2, -outerSize/2);
+            holeShape.lineTo(outerSize/2, outerSize/2);
+            holeShape.lineTo(-outerSize/2, outerSize/2);
+            holeShape.lineTo(-outerSize/2, -outerSize/2);
+
+            const holePath = new THREE.Path();
+            holePath.absarc(0, 0, radius, 0, Math.PI * 2, true);
+            holeShape.holes.push(holePath);
+
+            const extrudeSettings = {
+                depth: length,
+                bevelEnabled: true,
+                bevelSegments: 3,
+                steps: 1,
+                bevelSize: 1,
+                bevelThickness: 1
+            };
+
+            const geometry = new THREE.ExtrudeGeometry(holeShape, extrudeSettings);
+            geometry.center();
+
+            const material = new THREE.MeshStandardMaterial({
+                color: 0xc084fc,
+                metalness: 0.4,
+                roughness: 0.3,
+                transparent: true,
+                opacity: 0.5,
+                depthWrite: false
+            });
+
+            const blockMesh = new THREE.Mesh(geometry, material);
+            blockMesh.castShadow = false;
+            blockMesh.receiveShadow = true;
+            modelGroup.add(blockMesh);
+
+            const sectionGeo = new THREE.CylinderGeometry(radius, radius, length + 0.2, 32, 1, true);
+            const sectionMat = new THREE.MeshBasicMaterial({
+                color: 0x0067c0,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.4
+            });
+            const sectionMesh = new THREE.Mesh(sectionGeo, sectionMat);
+            sectionMesh.rotation.x = Math.PI / 2;
+            modelGroup.add(sectionMesh);
+
+            const frontZ = length / 2 + nominal * 0.3;
+
+            const mainLinePoints = [
+                new THREE.Vector3(0, -radius, frontZ),
+                new THREE.Vector3(0, radius, frontZ)
+            ];
+            const mainLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(mainLinePoints), lineMat);
+            dimensionGroup.add(mainLine);
+
+            const extTopPoints = [
+                new THREE.Vector3(0, radius, length / 2),
+                new THREE.Vector3(0, radius, frontZ + 6)
+            ];
+            const extBottomPoints = [
+                new THREE.Vector3(0, -radius, length / 2),
+                new THREE.Vector3(0, -radius, frontZ + 6)
+            ];
+
+            const extTopLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(extTopPoints), auxLineMat);
+            extTopLine.computeLineDistances();
+            const extBottomLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(extBottomPoints), auxLineMat);
+            extBottomLine.computeLineDistances();
+
+            dimensionGroup.add(extTopLine);
+            dimensionGroup.add(extBottomLine);
+
+            const topCap = new THREE.Mesh(capGeo, capMat);
+            topCap.position.set(0, radius - arrowHeight / 2, frontZ);
+            dimensionGroup.add(topCap);
+
+            const bottomCap = new THREE.Mesh(capGeo, capMat);
+            bottomCap.position.set(0, -radius + arrowHeight / 2, frontZ);
+            bottomCap.rotation.z = Math.PI;
+            dimensionGroup.add(bottomCap);
+
+        } else {
+            const shaftGeo = new THREE.CylinderGeometry(radius, radius, length, 48);
+            const shaftMat = new THREE.MeshStandardMaterial({
+                color: 0x34d399,
+                metalness: 0.5,
+                roughness: 0.2,
+                transparent: true,
+                opacity: 0.5,
+                depthWrite: false
+            });
+
+            const shaftMesh = new THREE.Mesh(shaftGeo, shaftMat);
+            shaftMesh.rotation.z = Math.PI / 2;
+            shaftMesh.castShadow = true;
+            shaftMesh.receiveShadow = true;
+            modelGroup.add(shaftMesh);
+
+            const stepGeo = new THREE.CylinderGeometry(radius * 1.3, radius * 1.3, length * 0.3, 32);
+            const stepMesh = new THREE.Mesh(stepGeo, shaftMat);
+            stepMesh.rotation.z = Math.PI / 2;
+            stepMesh.position.x = -length * 0.6;
+            modelGroup.add(stepMesh);
+
+            const xOffset = nominal * 1.1;
+
+            const mainLinePoints = [
+                new THREE.Vector3(xOffset, -radius, 0),
+                new THREE.Vector3(xOffset, radius, 0)
+            ];
+            const mainLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(mainLinePoints), lineMat);
+            dimensionGroup.add(mainLine);
+
+            const margin = 6;
+            const startX = length / 2;
+            const extTopPoints = [
+                new THREE.Vector3(startX, radius, 0),
+                new THREE.Vector3(xOffset + margin, radius, 0)
+            ];
+            const extBottomPoints = [
+                new THREE.Vector3(startX, -radius, 0),
+                new THREE.Vector3(xOffset + margin, -radius, 0)
+            ];
+
+            const extTopLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(extTopPoints), auxLineMat);
+            extTopLine.computeLineDistances();
+            const extBottomLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(extBottomPoints), auxLineMat);
+            extBottomLine.computeLineDistances();
+
+            dimensionGroup.add(extTopLine);
+            dimensionGroup.add(extBottomLine);
+
+            const topCap = new THREE.Mesh(capGeo, capMat);
+            topCap.position.set(xOffset, radius - arrowHeight / 2, 0);
+            dimensionGroup.add(topCap);
+
+            const bottomCap = new THREE.Mesh(capGeo, capMat);
+            bottomCap.position.set(xOffset, -radius + arrowHeight / 2, 0);
+            bottomCap.rotation.z = Math.PI;
+            dimensionGroup.add(bottomCap);
+        }
+    }
+
+    window.onload = function() {
+        initApp();
+        renderQuizEvaluation();
+        lucide.createIcons();
+    };
+</script>
